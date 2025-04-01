@@ -461,40 +461,17 @@ window.onload = function () {
         cell.visited = true;
         cell.color = '#4CAF50';
         
-        // Izvēlamies virzienu, kas ved tuvāk kontrolpunktam
-        const dx = checkpointArea.x + checkpointArea.entry.x - currentX;
-        const dy = checkpointArea.y + checkpointArea.entry.y - currentY;
-        
-        // Ja esam tuvāk horizontāli, vispirms mēģinām iet horizontāli
-        if (Math.abs(dx) > Math.abs(dy)) {
-          if (dx > 0 && currentX < checkpointArea.x + checkpointArea.entry.x) {
-            removeWallBetween(cell, getCell(currentX + 1, currentY));
-            currentX++;
-          } else if (dx < 0 && currentX > checkpointArea.x + checkpointArea.entry.x) {
-            removeWallBetween(cell, getCell(currentX - 1, currentY));
-            currentX--;
-          } else if (dy > 0 && currentY < checkpointArea.y + checkpointArea.entry.y) {
-            removeWallBetween(cell, getCell(currentX, currentY + 1));
-            currentY++;
-          } else if (dy < 0 && currentY > checkpointArea.y + checkpointArea.entry.y) {
-            removeWallBetween(cell, getCell(currentX, currentY - 1));
-            currentY--;
-          }
+        // Randomly choose direction
+        const shouldMoveHorizontal = Math.random() < 0.5;
+        if (shouldMoveHorizontal && currentX < checkpointArea.x + checkpointArea.entry.x) {
+          removeWallBetween(cell, getCell(currentX + 1, currentY));
+          currentX++;
+        } else if (currentY < checkpointArea.y + checkpointArea.entry.y) {
+          removeWallBetween(cell, getCell(currentX, currentY + 1));
+          currentY++;
         } else {
-          // Ja esam tuvāk vertikāli, vispirms mēģinām iet vertikāli
-          if (dy > 0 && currentY < checkpointArea.y + checkpointArea.entry.y) {
-            removeWallBetween(cell, getCell(currentX, currentY + 1));
-            currentY++;
-          } else if (dy < 0 && currentY > checkpointArea.y + checkpointArea.entry.y) {
-            removeWallBetween(cell, getCell(currentX, currentY - 1));
-            currentY--;
-          } else if (dx > 0 && currentX < checkpointArea.x + checkpointArea.entry.x) {
-            removeWallBetween(cell, getCell(currentX + 1, currentY));
-            currentX++;
-          } else if (dx < 0 && currentX > checkpointArea.x + checkpointArea.entry.x) {
-            removeWallBetween(cell, getCell(currentX - 1, currentY));
-            currentX--;
-          }
+          removeWallBetween(cell, getCell(currentX + 1, currentY));
+          currentX++;
         }
       }
     }
@@ -506,40 +483,17 @@ window.onload = function () {
         cell.visited = true;
         cell.color = '#4CAF50';
         
-        // Izvēlamies virzienu, kas ved tuvāk beigu punktam
-        const dx = finishArea.x + finishArea.entry.x - currentX;
-        const dy = finishArea.y + finishArea.entry.y - currentY;
-        
-        // Ja esam tuvāk horizontāli, vispirms mēģinām iet horizontāli
-        if (Math.abs(dx) > Math.abs(dy)) {
-          if (dx > 0 && currentX < finishArea.x + finishArea.entry.x) {
-            removeWallBetween(cell, getCell(currentX + 1, currentY));
-            currentX++;
-          } else if (dx < 0 && currentX > finishArea.x + finishArea.entry.x) {
-            removeWallBetween(cell, getCell(currentX - 1, currentY));
-            currentX--;
-          } else if (dy > 0 && currentY < finishArea.y + finishArea.entry.y) {
-            removeWallBetween(cell, getCell(currentX, currentY + 1));
-            currentY++;
-          } else if (dy < 0 && currentY > finishArea.y + finishArea.entry.y) {
-            removeWallBetween(cell, getCell(currentX, currentY - 1));
-            currentY--;
-          }
+        // Randomly choose direction
+        const shouldMoveHorizontal = Math.random() < 0.5;
+        if (shouldMoveHorizontal && currentX < finishArea.x + finishArea.entry.x) {
+          removeWallBetween(cell, getCell(currentX + 1, currentY));
+          currentX++;
+        } else if (currentY < finishArea.y + finishArea.entry.y) {
+          removeWallBetween(cell, getCell(currentX, currentY + 1));
+          currentY++;
         } else {
-          // Ja esam tuvāk vertikāli, vispirms mēģinām iet vertikāli
-          if (dy > 0 && currentY < finishArea.y + finishArea.entry.y) {
-            removeWallBetween(cell, getCell(currentX, currentY + 1));
-            currentY++;
-          } else if (dy < 0 && currentY > finishArea.y + finishArea.entry.y) {
-            removeWallBetween(cell, getCell(currentX, currentY - 1));
-            currentY--;
-          } else if (dx > 0 && currentX < finishArea.x + finishArea.entry.x) {
-            removeWallBetween(cell, getCell(currentX + 1, currentY));
-            currentX++;
-          } else if (dx < 0 && currentX > finishArea.x + finishArea.entry.x) {
-            removeWallBetween(cell, getCell(currentX - 1, currentY));
-            currentX--;
-          }
+          removeWallBetween(cell, getCell(currentX + 1, currentY));
+          currentX++;
         }
       }
     }
