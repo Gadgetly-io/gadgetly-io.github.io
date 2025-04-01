@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Labirints ar ceļu un izlaistām zonām</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <style>
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes slideIn {
+      from { transform: translateX(-100%); }
+      to { transform: translateX(0); }
+    }
+    
+    .animate-fade-in {
+      animation: fadeIn 0.5s ease-out forwards;
+    }
+    
+    .animate-slide-in {
+      animation: slideIn 0.5s ease-out forwards;
+    }
+    
+    canvas { 
+      border: 1px solid #e5e7eb; 
+      border-radius: 0.5rem;
+      transition: all 0.3s ease;
+    }
+    
+    canvas:hover {
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+    
+    .config-section {
+      transition: all 0.3s ease;
+    }
+    
+    .config-section:hover {
+      background-color: #f8fafc;
+    }
+    
+    .btn {
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .btn::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: width 0.6s ease, height 0.6s ease;
+    }
+    
+    .btn:hover::after {
+      width: 300px;
+      height: 300px;
+    }
+    
+    .input-range {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: #e5e7eb;
+      outline: none;
+    }
+    
+    .input-range::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #4f46e5;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .input-range::-webkit-slider-thumb:hover {
+      transform: scale(1.1);
+    }
+    
+    .tab {
+      transition: all 0.3s ease;
+    }
+    
+    .tab.active {
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+  <div class="container mx-auto px-4 py-8">
+    <h1 class="text-4xl font-bold text-center mb-8 text-gray-800 animate-fade-in">
+      <i class="fas fa-maze mr-2"></i>
+      Labirinta Ģenerators
+    </h1>
+    
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Labirinta attēls -->
+      <div class="lg:col-span-2 animate-fade-in">
+        <div class="relative">
+          <canvas id="maze" width="1000" height="1000" class="w-full bg-white shadow-lg"></canvas>
+          <div class="absolute top-4 right-4 space-x-2">
+            <button id="downloadBtn" class="btn bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg shadow-lg">
+              <i class="fas fa-download mr-2"></i>
+              Lejupielādēt
+            </button>
+            <button id="generateBtn" class="btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-lg">
+              <i class="fas fa-sync-alt mr-2"></i>
+              Ģenerēt jaunu
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Konfigurācijas panelis -->
+      <div class="bg-white p-6 rounded-lg shadow-lg animate-slide-in">
+        <h2 class="text-xl font-semibold mb-6 text-gray-800 flex items-center">
+          <i class="fas fa-cog mr-2"></i>
+          Konfigurācija
+        </h2>
+        
+        <!-- Tabs -->
+        <div class="flex space-x-2 mb-6">
+          <button class="tab active px-4 py-2 rounded-lg bg-blue-500 text-white" data-tab="main">
+            <i class="fas fa-sliders-h mr-2"></i>
+            Galvenie
+          </button>
+          <button class="tab px-4 py-2 rounded-lg bg-gray-200 text-gray-700" data-tab="areas">
+            <i class="fas fa-map mr-2"></i>
+            Zonas
+          </button>
+          <button class="tab px-4 py-2 rounded-lg bg-gray-200 text-gray-700" data-tab="random">
+            <i class="fas fa-dice mr-2"></i>
+            Randomizācija
+          </button>
+        </div>
+        
+        <!-- Galvenie parametri -->
+        <div id="main-tab" class="config-section space-y-4">
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">
+                <i class="fas fa-arrows-alt-h mr-1"></i>
+                Šūnu skaits platumā
+              </label>
+              <input type="number" id="cols" value="25" min="10" max="50" 
+                class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-all duration-200">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">
+                <i class="fas fa-arrows-alt-v mr-1"></i>
+                Šūnu skaits augstumā
+              </label>
+              <input type="number" id="rows" value="25" min="10" max="50" 
+                class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-all duration-200">
+            </div>
+          </div>
+        </div>
+        
+        <!-- Zonas -->
+        <div id="areas-tab" class="config-section space-y-6 hidden">
+          <!-- Sākuma zona -->
+          <div class="p-4 bg-gray-50 rounded-lg">
+            <h3 class="font-medium text-gray-700 mb-4 flex items-center">
+              <i class="fas fa-flag-checkered mr-2"></i>
+              Sākuma zona
+            </h3>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">X koordināte</label>
+                <input type="number" id="startX" value="0" min="0" 
+                  class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Y koordināte</label>
+                <input type="number" id="startY" value="0" min="0" 
+                  class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Platums</label>
+                <input type="number" id="startW" value="3" min="2" 
+                  class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Augstums</label>
+                <input type="number" id="startH" value="3" min="2" 
+                  class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+              </div>
+            </div>
+          </div>
+          
+          <!-- Kontrolpunkta zona -->
+          <div class="p-4 bg-gray-50 rounded-lg">
+            <h3 class="font-medium text-gray-700 mb-4 flex items-center">
+              <i class="fas fa-check-circle mr-2"></i>
+              Kontrolpunkta zona
+            </h3>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">X koordināte</label>
+                <input type="number" id="checkpointX" value="11" min="0" 
+                  class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Y koordināte</label>
+                <input type="number" id="checkpointY" value="11" min="0" 
+                  class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Platums</label>
+                <input type="number" id="checkpointW" value="6" min="2" 
+                  class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Augstums</label>
+                <input type="number" id="checkpointH" value="6" min="2" 
+                  class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+              </div>
+            </div>
+          </div>
+          
+          <!-- Beigu zona -->
+          <div class="p-4 bg-gray-50 rounded-lg">
+            <h3 class="font-medium text-gray-700 mb-4 flex items-center">
+              <i class="fas fa-flag mr-2"></i>
+              Beigu zona
+            </h3>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">X koordināte</label>
+                <input type="number" id="finishX" value="22" min="0" 
+                  class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Y koordināte</label>
+                <input type="number" id="finishY" value="22" min="0" 
+                  class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Platums</label>
+                <input type="number" id="finishW" value="3" min="2" 
+                  class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Augstums</label>
+                <input type="number" id="finishH" value="3" min="2" 
+                  class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Randomizācijas parametri -->
+        <div id="random-tab" class="config-section space-y-6 hidden">
+          <div class="p-4 bg-gray-50 rounded-lg">
+            <h3 class="font-medium text-gray-700 mb-4 flex items-center">
+              <i class="fas fa-random mr-2"></i>
+              Randomizācijas parametri
+            </h3>
+            <div class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                  <i class="fas fa-code-branch mr-1"></i>
+                  Minimālais atzarojumu skaits
+                </label>
+                <input type="number" id="minBranches" value="30" min="10" 
+                  class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                  <i class="fas fa-code-branch mr-1"></i>
+                  Maksimālais atzarojumu skaits
+                </label>
+                <input type="number" id="maxBranches" value="45" min="20" 
+                  class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                  <i class="fas fa-ruler mr-1"></i>
+                  Minimālais attālums starp atzarojumiem
+                </label>
+                <input type="number" id="minDistance" value="3" min="1" 
+                  class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                  <i class="fas fa-percentage mr-1"></i>
+                  Varbūtība mainīt virzienu pie malas
+                </label>
+                <input type="range" id="edgeChangeProb" min="0" max="100" value="95" 
+                  class="input-range">
+                <div class="text-sm text-gray-500 mt-1" id="edgeChangeProbValue">95%</div>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                  <i class="fas fa-percentage mr-1"></i>
+                  Varbūtība mainīt virzienu
+                </label>
+                <input type="range" id="changeProb" min="0" max="100" value="85" 
+                  class="input-range">
+                <div class="text-sm text-gray-500 mt-1" id="changeProbValue">85%</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Pievienojam tab funkcionalitāti
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        // Noņemam active klasi no visiem tabiem
+        document.querySelectorAll('.tab').forEach(t => {
+          t.classList.remove('active');
+          t.classList.remove('bg-blue-500', 'text-white');
+          t.classList.add('bg-gray-200', 'text-gray-700');
+        });
+        
+        // Pievienojam active klasi pašreizējam tabam
+        tab.classList.add('active');
+        tab.classList.remove('bg-gray-200', 'text-gray-700');
+        tab.classList.add('bg-blue-500', 'text-white');
+        
+        // Paslēpjam visus tab saturus
+        document.querySelectorAll('.config-section').forEach(section => {
+          section.classList.add('hidden');
+        });
+        
+        // Parādam atbilstošo saturu
+        const tabId = tab.getAttribute('data-tab');
+        document.getElementById(`${tabId}-tab`).classList.remove('hidden');
+      });
+    });
+    
+    // Pievienojam range input vērtību atjaunināšanu
+    document.getElementById('edgeChangeProb').addEventListener('input', (e) => {
+      document.getElementById('edgeChangeProbValue').textContent = `${e.target.value}%`;
+    });
+    
+    document.getElementById('changeProb').addEventListener('input', (e) => {
+      document.getElementById('changeProbValue').textContent = `${e.target.value}%`;
+    });
+  </script>
+
+<script>
+window.onload = function () {
+  const canvas = document.getElementById("maze");
+  const ctx = canvas.getContext("2d");
+
+  let cols = 25;
+  let rows = 25;
+  let cellSize = canvas.width / cols;
+  let grid = [];
+
+  class Cell {
+    constructor(x, y) {
+      this.x = x;
+      this.y = y;
+      this.visited = false;
+      this.blocked = false;
+      this.walls = [true, true, true, true]; // top, right, bottom, left
+      this.color = '#FFFFFF'; // Mainām noklusēto krāsu uz baltu
+    }
+
+    draw() {
+      const x = this.x * cellSize;
+      const y = this.y * cellSize;
+
+      // Vispirms aizpildam šūnu ar baltu krāsu
+      ctx.fillStyle = this.color;
+        ctx.fillRect(x, y, cellSize, cellSize);
+
+      // Tad zīmējam sienas
+      ctx.strokeStyle = "black";
+      ctx.lineWidth = 2;
+      if (this.walls[0]) drawLine(x, y, x + cellSize, y);
+      if (this.walls[1]) drawLine(x + cellSize, y, x + cellSize, y + cellSize);
+      if (this.walls[2]) drawLine(x + cellSize, y + cellSize, x, y + cellSize);
+      if (this.walls[3]) drawLine(x, y + cellSize, x, y);
+    }
+  }
+
+  function drawLine(x1, y1, x2, y2) {
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+  }
+
+  function index(x, y) {
+    if (x < 0 || y < 0 || x >= cols || y >= rows) return -1;
+    return x + y * cols;
+  }
+
+  function getCell(x, y) {
+    return grid[index(x, y)];
+  }
+
+  // 1. Setup grid
+  for (let y = 0; y < rows; y++) {
+    for (let x = 0; x < cols; x++) {
+      grid.push(new Cell(x, y));
+    }
+  }
+
+  // 2. Define large areas to ignore during generation
+  let largeAreas = [
+    { x: 0, y: 0, w: 3, h: 3, type: 'start', entry: { x: 2, y: 1 }, exit: { x: 2, y: 2 } },
+    { x: Math.floor(cols / 2) - 3, y: Math.floor(rows / 2) - 3, w: 6, h: 6, type: 'checkpoint', entry: { x: 0, y: 1 }, exit: { x: 2, y: 1 } },
+    { x: cols - 3, y: rows - 3, w: 3, h: 3, type: 'finish', entry: { x: 0, y: 1 }, exit: { x: 0, y: 2 } }
+  ];
+
+  function markBlockedAreas() {
+    largeAreas.forEach(area => {
+      for (let dy = 0; dy < area.h; dy++) {
+        for (let dx = 0; dx < area.w; dx++) {
+          const cell = getCell(area.x + dx, area.y + dy);
+          if (cell) {
+            cell.visited = true;
+            cell.color = '#FFFFFF'; // Mainām uz baltu
+            
+            // Noņemam sienas iekšējām šūnām
+            if (dx > 0) cell.walls[3] = false;
+            if (dx < area.w - 1) cell.walls[1] = false;
+            if (dy > 0) cell.walls[0] = false;
+            if (dy < area.h - 1) cell.walls[2] = false;
+            
+            cell.blocked = dx === 0 || dx === area.w - 1 || dy === 0 || dy === area.h - 1;
+          }
+        }
+      }
+    });
+  }
+
+  function createMainPath() {
+    const startArea = largeAreas[0];
+    const checkpointArea = largeAreas[1];
+    const finishArea = largeAreas[2];
+    
+    // Start from start area exit
+    let currentX = startArea.x + startArea.exit.x;
+    let currentY = startArea.y + startArea.exit.y;
+    
+    // First path: start to checkpoint
+    while (currentX < checkpointArea.x + checkpointArea.entry.x || currentY < checkpointArea.y + checkpointArea.entry.y) {
+      const cell = getCell(currentX, currentY);
+      if (cell) {
+        cell.visited = true;
+        cell.color = '#4CAF50';
+        
+        // Izvēlamies virzienu, kas ved tuvāk kontrolpunktam
+        const dx = checkpointArea.x + checkpointArea.entry.x - currentX;
+        const dy = checkpointArea.y + checkpointArea.entry.y - currentY;
+        
+        // Ja esam tuvāk horizontāli, vispirms mēģinām iet horizontāli
+        if (Math.abs(dx) > Math.abs(dy)) {
+          if (dx > 0 && currentX < checkpointArea.x + checkpointArea.entry.x) {
+            removeWallBetween(cell, getCell(currentX + 1, currentY));
+            currentX++;
+          } else if (dx < 0 && currentX > checkpointArea.x + checkpointArea.entry.x) {
+            removeWallBetween(cell, getCell(currentX - 1, currentY));
+            currentX--;
+          } else if (dy > 0 && currentY < checkpointArea.y + checkpointArea.entry.y) {
+            removeWallBetween(cell, getCell(currentX, currentY + 1));
+            currentY++;
+          } else if (dy < 0 && currentY > checkpointArea.y + checkpointArea.entry.y) {
+            removeWallBetween(cell, getCell(currentX, currentY - 1));
+            currentY--;
+          }
+        } else {
+          // Ja esam tuvāk vertikāli, vispirms mēģinām iet vertikāli
+          if (dy > 0 && currentY < checkpointArea.y + checkpointArea.entry.y) {
+            removeWallBetween(cell, getCell(currentX, currentY + 1));
+            currentY++;
+          } else if (dy < 0 && currentY > checkpointArea.y + checkpointArea.entry.y) {
+            removeWallBetween(cell, getCell(currentX, currentY - 1));
+            currentY--;
+          } else if (dx > 0 && currentX < checkpointArea.x + checkpointArea.entry.x) {
+            removeWallBetween(cell, getCell(currentX + 1, currentY));
+            currentX++;
+          } else if (dx < 0 && currentX > checkpointArea.x + checkpointArea.entry.x) {
+            removeWallBetween(cell, getCell(currentX - 1, currentY));
+            currentX--;
+          }
+        }
+      }
+    }
+    
+    // Second path: checkpoint to finish
+    while (currentX < finishArea.x + finishArea.entry.x || currentY < finishArea.y + finishArea.entry.y) {
+      const cell = getCell(currentX, currentY);
+      if (cell) {
+        cell.visited = true;
+        cell.color = '#4CAF50';
+        
+        // Izvēlamies virzienu, kas ved tuvāk beigu punktam
+        const dx = finishArea.x + finishArea.entry.x - currentX;
+        const dy = finishArea.y + finishArea.entry.y - currentY;
+        
+        // Ja esam tuvāk horizontāli, vispirms mēģinām iet horizontāli
+        if (Math.abs(dx) > Math.abs(dy)) {
+          if (dx > 0 && currentX < finishArea.x + finishArea.entry.x) {
+            removeWallBetween(cell, getCell(currentX + 1, currentY));
+            currentX++;
+          } else if (dx < 0 && currentX > finishArea.x + finishArea.entry.x) {
+            removeWallBetween(cell, getCell(currentX - 1, currentY));
+            currentX--;
+          } else if (dy > 0 && currentY < finishArea.y + finishArea.entry.y) {
+            removeWallBetween(cell, getCell(currentX, currentY + 1));
+            currentY++;
+          } else if (dy < 0 && currentY > finishArea.y + finishArea.entry.y) {
+            removeWallBetween(cell, getCell(currentX, currentY - 1));
+            currentY--;
+          }
+        } else {
+          // Ja esam tuvāk vertikāli, vispirms mēģinām iet vertikāli
+          if (dy > 0 && currentY < finishArea.y + finishArea.entry.y) {
+            removeWallBetween(cell, getCell(currentX, currentY + 1));
+            currentY++;
+          } else if (dy < 0 && currentY > finishArea.y + finishArea.entry.y) {
+            removeWallBetween(cell, getCell(currentX, currentY - 1));
+            currentY--;
+          } else if (dx > 0 && currentX < finishArea.x + finishArea.entry.x) {
+            removeWallBetween(cell, getCell(currentX + 1, currentY));
+            currentX++;
+          } else if (dx < 0 && currentX > finishArea.x + finishArea.entry.x) {
+            removeWallBetween(cell, getCell(currentX - 1, currentY));
+            currentX--;
+          }
+        }
+      }
+    }
+  }
+
+  function getUnvisitedNeighbors(cell) {
+    const directions = [
+      { dx: 0, dy: -1, dir: 0 },
+      { dx: 1, dy: 0, dir: 1 },
+      { dx: 0, dy: 1, dir: 2 },
+      { dx: -1, dy: 0, dir: 3 }
+    ];
+    const neighbors = [];
+
+    directions.forEach(({ dx, dy, dir }) => {
+      const nx = cell.x + dx;
+      const ny = cell.y + dy;
+      const neighbor = getCell(nx, ny);
+      if (neighbor && !neighbor.visited && !neighbor.blocked) {
+        // Pārbaudām tikai tiešos kaimiņus
+        const hasVisitedNeighbor = directions.some(({ dx: ddx, dy: ddy }) => {
+          const checkX = nx + ddx;
+          const checkY = ny + ddy;
+          const checkCell = getCell(checkX, checkY);
+          return checkCell && checkCell.visited && checkCell !== cell;
+        });
+        
+        if (!hasVisitedNeighbor || Math.random() < 0.3) { // 30% iespēja turpināt pat ja ir kaimiņš
+        neighbors.push({ cell: neighbor, dir });
+        }
+      }
+    });
+    return neighbors;
+  }
+
+  function removeWallBetween(a, b) {
+    const dx = b.x - a.x;
+    const dy = b.y - a.y;
+    if (dx === 1) { a.walls[1] = false; b.walls[3] = false; }
+    else if (dx === -1) { a.walls[3] = false; b.walls[1] = false; }
+    else if (dy === 1) { a.walls[2] = false; b.walls[0] = false; }
+    else if (dy === -1) { a.walls[0] = false; b.walls[2] = false; }
+  }
+
+  // Pievienojam globālos mainīgos
+  let isGenerating = false;
+  let generationTimeout = null;
+  let stack = [];
+  let activeGrowthCount = 0;
+
+  // Funkcija esošās ģenerēšanas apstādināšanai
+  function stopGeneration() {
+    isGenerating = false;
+    if (generationTimeout) {
+      clearTimeout(generationTimeout);
+      generationTimeout = null;
+    }
+    stack = [];
+    activeGrowthCount = 0;
+  }
+
+  // Atjaunojam generateMazeStep funkciju
+  function generateMazeStep(current) {
+    if (!isGenerating) return;
+    
+  current.visited = true;
+    current.color = '#2196F3';
+  const neighbors = getUnvisitedNeighbors(current);
+
+  if (neighbors.length > 0) {
+      const lastDirection = stack.length > 0 ? 
+        { dx: current.x - stack[stack.length - 1].x, dy: current.y - stack[stack.length - 1].y } : 
+        null;
+      
+      let next;
+      if (lastDirection && stack.length > 2) {
+        const isNearEdge = current.x <= 1 || current.x >= cols - 2 || current.y <= 1 || current.y >= rows - 2;
+        const changeDirectionProbability = isNearEdge ? 0.95 : 0.85;
+        
+        if (Math.random() < changeDirectionProbability) {
+          const perpendicularNeighbors = neighbors.filter(({ cell }) => {
+            const dx = cell.x - current.x;
+            const dy = cell.y - current.y;
+            
+            if (isNearEdge) {
+              if (current.x <= 1 && dx <= 0) return false;
+              if (current.x >= cols - 2 && dx >= 0) return false;
+              if (current.y <= 1 && dy <= 0) return false;
+              if (current.y >= rows - 2 && dy >= 0) return false;
+            }
+            
+            return (dx !== lastDirection.dx && dy !== lastDirection.dy);
+          });
+          
+          if (perpendicularNeighbors.length > 0) {
+            next = perpendicularNeighbors[Math.floor(Math.random() * perpendicularNeighbors.length)];
+          } else {
+            const awayFromEdgeNeighbors = neighbors.filter(({ cell }) => {
+              if (current.x <= 1) return cell.x > current.x;
+              if (current.x >= cols - 2) return cell.x < current.x;
+              if (current.y <= 1) return cell.y > current.y;
+              if (current.y >= rows - 2) return cell.y < current.y;
+              return true;
+            });
+            
+            next = awayFromEdgeNeighbors.length > 0 ? 
+              awayFromEdgeNeighbors[Math.floor(Math.random() * awayFromEdgeNeighbors.length)] :
+              neighbors[Math.floor(Math.random() * neighbors.length)];
+          }
+        } else {
+          next = neighbors[Math.floor(Math.random() * neighbors.length)];
+        }
+      } else {
+        next = neighbors[Math.floor(Math.random() * neighbors.length)];
+      }
+
+      removeWallBetween(current, next.cell);
+    stack.push(current);
+      draw();
+      generationTimeout = setTimeout(() => generateMazeStep(next.cell), 5);
+  } else if (stack.length > 0) {
+    const back = stack.pop();
+      draw();
+      generationTimeout = setTimeout(() => generateMazeStep(back), 5);
+  } else {
+      activeGrowthCount--;
+      if (activeGrowthCount === 0) {
+        generationTimeout = setTimeout(finalizeMaze, 500);
+      }
+    }
+  }
+
+  function getMainPathCells() {
+    return grid.filter(cell => cell.color === '#4CAF50');
+  }
+
+  function getBranchingPoints() {
+    const mainPathCells = getMainPathCells();
+    const branchingPoints = [];
+    
+    mainPathCells.forEach(cell => {
+      const neighbors = getUnvisitedNeighbors(cell);
+      if (neighbors.length >= 1) {
+        if (Math.random() < 0.6) {
+          branchingPoints.push(cell);
+        }
+      }
+    });
+    
+    return branchingPoints;
+  }
+
+  function generateBranchFromPoint(startCell) {
+    const neighbors = getUnvisitedNeighbors(startCell);
+    if (neighbors.length > 0) {
+      const { cell: next } = neighbors[Math.floor(Math.random() * neighbors.length)];
+      removeWallBetween(startCell, next);
+      next.visited = true;
+      next.color = '#2196F3';
+      return next;
+    }
+    return null;
+  }
+
+  function generateBranches() {
+    const branchingPoints = getBranchingPoints();
+    if (branchingPoints.length === 0) return;
+
+    const numBranches = Math.floor(Math.random() * 15) + 30;
+    const selectedPoints = [];
+    
+    const minDistance = 3;
+    
+    for (let i = 0; i < Math.min(numBranches, branchingPoints.length); i++) {
+      let attempts = 0;
+      let found = false;
+      
+      while (!found && attempts < 10) {
+        const randomIndex = Math.floor(Math.random() * branchingPoints.length);
+        const point = branchingPoints[randomIndex];
+        
+        const isTooClose = selectedPoints.some(selectedPoint => {
+          const dx = Math.abs(point.x - selectedPoint.x);
+          const dy = Math.abs(point.y - selectedPoint.y);
+          return dx + dy < minDistance;
+        });
+        
+        if (!isTooClose) {
+          selectedPoints.push(point);
+          branchingPoints.splice(randomIndex, 1);
+          found = true;
+        }
+        
+        attempts++;
+      }
+    }
+
+    selectedPoints.forEach(point => {
+      const branchCell = generateBranchFromPoint(point);
+      if (branchCell) {
+        activeGrowthCount++;
+        generateMazeStep(branchCell);
+      }
+    });
+  }
+
+  // Sākotnējā ģenerēšana
+  isGenerating = true;
+  markBlockedAreas();
+  createMainPath();
+  draw();
+  generationTimeout = setTimeout(startBranching, 1000);
+
+  // Tad sākam ģenerēt atzarojumus
+  function startBranching() {
+    if (!isGenerating) return;
+    
+    if (activeGrowthCount === 0) {
+      generateBranches();
+      if (activeGrowthCount === 0) {
+        generationTimeout = setTimeout(finalizeMaze, 500);
+      } else {
+        generationTimeout = setTimeout(startBranching, 50);
+      }
+    } else {
+      generationTimeout = setTimeout(startBranching, 50);
+    }
+  }
+
+  function openUnvisitedCells() {
+    const unvisitedCells = grid.filter(cell => !cell.visited && !cell.blocked);
+    
+    // Sajaucam neapmeklētās šūnas nejaušā secībā
+    const shuffledCells = unvisitedCells.sort(() => Math.random() - 0.5);
+    
+    // Atveram tikai vienu sienu katrai neapmeklētajai šūnai
+    shuffledCells.forEach(cell => {
+      // Ja šūna jau ir apstrādāta (kāds kaimiņš to ir apmeklējis), izlaižam
+      if (cell.visited) return;
+      
+      const directions = [
+        { dx: 0, dy: -1, dir: 0, wallIndex: 0 }, // top
+        { dx: 1, dy: 0, dir: 1, wallIndex: 1 },  // right
+        { dx: 0, dy: 1, dir: 2, wallIndex: 2 },  // bottom
+        { dx: -1, dy: 0, dir: 3, wallIndex: 3 }  // left
+      ];
+      
+      // Sajaucam virzienus nejaušā secībā
+      const shuffledDirections = directions.sort(() => Math.random() - 0.5);
+      
+      // Mēģinām atvērt tikai vienu sienu
+      for (const { dx, dy, wallIndex } of shuffledDirections) {
+        const nx = cell.x + dx;
+        const ny = cell.y + dy;
+        const neighbor = getCell(nx, ny);
+        
+        // Pārbaudam vai kaimiņš ir derīgs
+        if (neighbor && 
+            !neighbor.blocked && 
+            neighbor.color !== '#4CAF50' && // Nav galvenā ceļa daļa
+            !largeAreas.some(area => 
+              nx >= area.x && nx < area.x + area.w && 
+              ny >= area.y && ny < area.y + area.h
+            )) {
+          
+          // Atveram sienu
+          cell.walls[wallIndex] = false;
+          neighbor.walls[(wallIndex + 2) % 4] = false; // Pretējā siena
+          
+          // Atzīmējam abas šūnas kā apmeklētas
+          cell.visited = true;
+          neighbor.visited = true;
+          
+          // Iekrāsojam abas šūnas, lai redzētu izmaiņas
+          cell.color = '#FF0000';
+          neighbor.color = '#FF0000';
+          
+          break; // Izejam no cikla, jo esam atvēruši vienu sienu
+        }
+      }
+    });
+    
+    draw();
+  }
+
+  function finalizeMaze() {
+    // Vispirms atveram sienas neapmeklētajiem blokiem
+    openUnvisitedCells();
+    
+    // Tad iestata visām šūnām baltu krāsu
+    setTimeout(() => {
+      grid.forEach(cell => {
+        cell.color = '#FFFFFF';
+      });
+      draw();
+    }, 2000); // Pagaidām 500ms lai varētu redzēt izmaiņas
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    grid.forEach(cell => cell.draw());
+  }
+
+  function downloadMaze() {
+    // Izveidojam jaunu canvas ar augstāku izšķirtspēju
+    const downloadCanvas = document.createElement('canvas');
+    const downloadCtx = downloadCanvas.getContext('2d');
+    
+    // Iestatām augstāku izšķirtspēju (4x)
+    const scale = 4;
+    downloadCanvas.width = canvas.width * scale;
+    downloadCanvas.height = canvas.height * scale;
+    
+    // Iestatām baltu fona krāsu
+    downloadCtx.fillStyle = '#FFFFFF';
+    downloadCtx.fillRect(0, 0, downloadCanvas.width, downloadCanvas.height);
+    
+    // Pārzīmējam labirintu uz jauno canvas ar augstāku izšķirtspēju
+    downloadCtx.scale(scale, scale);
+    grid.forEach(cell => {
+      const x = cell.x * cellSize;
+      const y = cell.y * cellSize;
+      
+      // Aizpildām šūnu ar baltu krāsu
+      downloadCtx.fillStyle = '#FFFFFF';
+      downloadCtx.fillRect(x, y, cellSize, cellSize);
+      
+      // Zīmējam sienas
+      downloadCtx.strokeStyle = "black";
+      downloadCtx.lineWidth = 2;
+      
+      // Zīmējam sienas izmantojot downloadCtx
+      if (cell.walls[0]) {
+        downloadCtx.beginPath();
+        downloadCtx.moveTo(x, y);
+        downloadCtx.lineTo(x + cellSize, y);
+        downloadCtx.stroke();
+      }
+      if (cell.walls[1]) {
+        downloadCtx.beginPath();
+        downloadCtx.moveTo(x + cellSize, y);
+        downloadCtx.lineTo(x + cellSize, y + cellSize);
+        downloadCtx.stroke();
+      }
+      if (cell.walls[2]) {
+        downloadCtx.beginPath();
+        downloadCtx.moveTo(x + cellSize, y + cellSize);
+        downloadCtx.lineTo(x, y + cellSize);
+        downloadCtx.stroke();
+      }
+      if (cell.walls[3]) {
+        downloadCtx.beginPath();
+        downloadCtx.moveTo(x, y + cellSize);
+        downloadCtx.lineTo(x, y);
+        downloadCtx.stroke();
+      }
+    });
+    
+    // Lejupielādējam attēlu
+    const link = document.createElement('a');
+    link.download = 'labirints.png';
+    link.href = downloadCanvas.toDataURL('image/png');
+    link.click();
+  }
+
+  // Pievienojam pogas event listener
+  document.getElementById('downloadBtn').addEventListener('click', downloadMaze);
+
+  // Atjaunojam generateNewMaze funkciju
+  function generateNewMaze() {
+    // Apstādinām esošo ģenerēšanu
+    stopGeneration();
+    
+    // Iegūstam jaunos parametrus
+    const newCols = parseInt(document.getElementById('cols').value);
+    const newRows = parseInt(document.getElementById('rows').value);
+    
+    // Iegūstam jaunos largeAreas parametrus
+    const startArea = {
+      x: parseInt(document.getElementById('startX').value),
+      y: parseInt(document.getElementById('startY').value),
+      w: parseInt(document.getElementById('startW').value),
+      h: parseInt(document.getElementById('startH').value),
+      type: 'start',
+      entry: { x: 2, y: 1 },
+      exit: { x: 2, y: 2 }
+    };
+    
+    const checkpointArea = {
+      x: parseInt(document.getElementById('checkpointX').value),
+      y: parseInt(document.getElementById('checkpointY').value),
+      w: parseInt(document.getElementById('checkpointW').value),
+      h: parseInt(document.getElementById('checkpointH').value),
+      type: 'checkpoint',
+      entry: { x: 0, y: 1 },
+      exit: { x: 2, y: 1 }
+    };
+    
+    const finishArea = {
+      x: parseInt(document.getElementById('finishX').value),
+      y: parseInt(document.getElementById('finishY').value),
+      w: parseInt(document.getElementById('finishW').value),
+      h: parseInt(document.getElementById('finishH').value),
+      type: 'finish',
+      entry: { x: 0, y: 1 },
+      exit: { x: 0, y: 2 }
+    };
+
+    // Iegūstam randomizācijas parametrus
+    const minBranches = parseInt(document.getElementById('minBranches').value);
+    const maxBranches = parseInt(document.getElementById('maxBranches').value);
+    const minDistance = parseInt(document.getElementById('minDistance').value);
+    const edgeChangeProb = parseInt(document.getElementById('edgeChangeProb').value) / 100;
+    const changeProb = parseInt(document.getElementById('changeProb').value) / 100;
+
+    // Atjaunojam globālos mainīgos
+    cols = newCols;
+    rows = newRows;
+    cellSize = canvas.width / cols;
+    grid = [];
+    largeAreas = [startArea, checkpointArea, finishArea];
+
+    // Izveidojam jaunu režģi
+    for (let y = 0; y < rows; y++) {
+      for (let x = 0; x < cols; x++) {
+        grid.push(new Cell(x, y));
+      }
+    }
+
+    // Atjaunojam randomizācijas parametrus
+    const originalGenerateBranches = generateBranches;
+    generateBranches = function() {
+      const branchingPoints = getBranchingPoints();
+      if (branchingPoints.length === 0) return;
+
+      const numBranches = Math.floor(Math.random() * (maxBranches - minBranches + 1)) + minBranches;
+      const selectedPoints = [];
+      
+      for (let i = 0; i < Math.min(numBranches, branchingPoints.length); i++) {
+        let attempts = 0;
+        let found = false;
+        
+        while (!found && attempts < 10) {
+          const randomIndex = Math.floor(Math.random() * branchingPoints.length);
+          const point = branchingPoints[randomIndex];
+          
+          const isTooClose = selectedPoints.some(selectedPoint => {
+            const dx = Math.abs(point.x - selectedPoint.x);
+            const dy = Math.abs(point.y - selectedPoint.y);
+            return dx + dy < minDistance;
+          });
+          
+          if (!isTooClose) {
+            selectedPoints.push(point);
+            branchingPoints.splice(randomIndex, 1);
+            found = true;
+          }
+          
+          attempts++;
+        }
+      }
+
+      selectedPoints.forEach(point => {
+        const branchCell = generateBranchFromPoint(point);
+        if (branchCell) {
+          activeGrowthCount++;
+          generateMazeStep(branchCell);
+        }
+      });
+    };
+
+    // Atjaunojam varbūtības mainīt virzienu
+    const originalGenerateMazeStep = generateMazeStep;
+    generateMazeStep = function(current) {
+      if (!isGenerating) return;
+      
+      current.visited = true;
+      current.color = '#2196F3';
+      const neighbors = getUnvisitedNeighbors(current);
+
+      if (neighbors.length > 0) {
+        const lastDirection = stack.length > 0 ? 
+          { dx: current.x - stack[stack.length - 1].x, dy: current.y - stack[stack.length - 1].y } : 
+          null;
+        
+        let next;
+        if (lastDirection && stack.length > 2) {
+          const isNearEdge = current.x <= 1 || current.x >= cols - 2 || current.y <= 1 || current.y >= rows - 2;
+          const changeDirectionProbability = isNearEdge ? edgeChangeProb : changeProb;
+          
+          if (Math.random() < changeDirectionProbability) {
+            const perpendicularNeighbors = neighbors.filter(({ cell }) => {
+              const dx = cell.x - current.x;
+              const dy = cell.y - current.y;
+              
+              if (isNearEdge) {
+                if (current.x <= 1 && dx <= 0) return false;
+                if (current.x >= cols - 2 && dx >= 0) return false;
+                if (current.y <= 1 && dy <= 0) return false;
+                if (current.y >= rows - 2 && dy >= 0) return false;
+              }
+              
+              return (dx !== lastDirection.dx && dy !== lastDirection.dy);
+            });
+            
+            if (perpendicularNeighbors.length > 0) {
+              next = perpendicularNeighbors[Math.floor(Math.random() * perpendicularNeighbors.length)];
+            } else {
+              const awayFromEdgeNeighbors = neighbors.filter(({ cell }) => {
+                if (current.x <= 1) return cell.x > current.x;
+                if (current.x >= cols - 2) return cell.x < current.x;
+                if (current.y <= 1) return cell.y > current.y;
+                if (current.y >= rows - 2) return cell.y < current.y;
+                return true;
+              });
+              
+              next = awayFromEdgeNeighbors.length > 0 ? 
+                awayFromEdgeNeighbors[Math.floor(Math.random() * awayFromEdgeNeighbors.length)] :
+                neighbors[Math.floor(Math.random() * neighbors.length)];
+            }
+          } else {
+            next = neighbors[Math.floor(Math.random() * neighbors.length)];
+          }
+        } else {
+          next = neighbors[Math.floor(Math.random() * neighbors.length)];
+        }
+
+        removeWallBetween(current, next.cell);
+        stack.push(current);
+        draw();
+        generationTimeout = setTimeout(() => generateMazeStep(next.cell), 5);
+      } else if (stack.length > 0) {
+        const back = stack.pop();
+        draw();
+        generationTimeout = setTimeout(() => generateMazeStep(back), 5);
+      } else {
+        activeGrowthCount--;
+        if (activeGrowthCount === 0) {
+          generationTimeout = setTimeout(finalizeMaze, 500);
+        }
+      }
+    };
+
+    // Sākam jaunu labirinta ģenerēšanu
+    isGenerating = true;
+    markBlockedAreas();
+    createMainPath();
+  draw();
+    generationTimeout = setTimeout(startBranching, 1000);
+  }
+
+  // Pievienojam pogas event listener
+  document.getElementById('generateBtn').addEventListener('click', generateNewMaze);
+};
+</script>
+</body>
+</html>
