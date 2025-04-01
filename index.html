@@ -3,326 +3,573 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Labirints ar ceļu un izlaistām zonām</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="The world's best free maze generator with no ads. Create custom mazes with start, checkpoint, and finish areas. Perfect for games, puzzles, and educational purposes.">
+  <meta name="keywords"
+    content="maze generator, free maze maker, custom maze creator, puzzle generator, educational maze">
+  <title>World's Best Free Maze Generator | No Ads | Customizable</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/flyo-ui@latest/dist/flyo.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/flyo-ui@latest/dist/flyo.min.js"></script>
   <style>
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    :root {
+      --background: #e0e5ec;
+      --text: #2d3436;
+      --primary: #6c5ce7;
+      --secondary: #00b894;
+      --accent: #fdcb6e;
+      --shadow-light: 6px 6px 12px #b8bec5;
+      --shadow-dark: -6px -6px 12px #ffffff;
+      --shadow-inset-light: inset 6px 6px 12px #b8bec5;
+      --shadow-inset-dark: inset -6px -6px 12px #ffffff;
     }
 
-    @keyframes slideIn {
-      from {
-        transform: translateX(-100%);
-      }
-
-      to {
-        transform: translateX(0);
-      }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--background);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+      padding-top: 0; /* Noņemam padding-top, jo navigācija vairs nav fiksēta */
+    }
+ 
+    .neumorphic {
+      background: var(--background);
+      box-shadow: var(--shadow-light), var(--shadow-dark);
+      border-radius: 12px;
+      transition: all 0.2s ease;
     }
 
-    .animate-fade-in {
-      animation: fadeIn 0.5s ease-out forwards;
+    nav {
+      background: var(--background);
+      box-shadow: var(--shadow-light), var(--shadow-dark);
+      border-radius: 0;
+      margin-bottom: 20px;
+      height: 60px;
+      display: flex;
+      align-items: center;
     }
 
-    .animate-slide-in {
-      animation: slideIn 0.5s ease-out forwards;
+    nav .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
     }
 
-    canvas {
-      border: 1px solid #e5e7eb;
-      border-radius: 0.5rem;
-      transition: all 0.3s ease;
-    }
-
-    canvas:hover {
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-    }
-
-    .config-section {
-      transition: all 0.3s ease;
-    }
-
-    .config-section:hover {
-      background-color: #f8fafc;
-    }
-
-    .btn {
-      transition: all 0.3s ease;
+    .neumorphic-btn {
+      background: var(--background);
+      box-shadow: var(--shadow-light), var(--shadow-dark);
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      border: 2px solid transparent;
+      cursor: pointer;
+      font-size: 0.9rem;
       position: relative;
       overflow: hidden;
     }
 
-    .btn::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 0;
-      height: 0;
-      background: rgba(255, 255, 255, 0.2);
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
-      transition: width 0.6s ease, height 0.6s ease;
+    .neumorphic-btn:hover {
+      border-color: var(--primary);
     }
 
-    .btn:hover::after {
-      width: 300px;
-      height: 300px;
+    .neumorphic-btn:active {
+      transform: scale(0.95);
+      box-shadow: var(--shadow-inset-light), var(--shadow-inset-dark);
     }
 
-    .input-range {
+    .neumorphic-btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .neumorphic-btn-primary:hover {
+      border-color: white;
+    }
+
+    .neumorphic-btn-success {
+      background: var(--secondary);
+      color: white;
+    }
+
+    .neumorphic-btn-success:hover {
+      border-color: white;
+    }
+
+    .neumorphic-input {
+      background: var(--background);
+      box-shadow: var(--shadow-inset-light), var(--shadow-inset-dark);
+      border-radius: 8px;
+      padding: 8px 12px;
+      border: none;
+      width: 100%;
+      transition: all 0.2s ease;
+      font-size: 0.9rem;
+    }
+
+    .neumorphic-input:focus {
+      outline: none;
+      box-shadow: var(--shadow-inset-light), var(--shadow-inset-dark);
+    }
+
+    .neumorphic-tab {
+      background: var(--background);
+      box-shadow: var(--shadow-light), var(--shadow-dark);
+      border-radius: 8px;
+      padding: 6px 12px;
+      transition: all 0.2s ease;
+      border: none;
+      cursor: pointer;
+      font-size: 0.9rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .neumorphic-tab:active {
+      transform: scale(0.95);
+      box-shadow: var(--shadow-inset-light), var(--shadow-inset-dark);
+    }
+
+    .neumorphic-tab.active {
+      background: var(--primary);
+      color: white;
+      box-shadow: var(--shadow-inset-light), var(--shadow-inset-dark);
+      animation: tabActivate 0.3s ease;
+    }
+
+    @keyframes tabActivate {
+      0% { transform: scale(1); }
+      50% { transform: scale(0.95); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes btnPress {
+      0% { transform: scale(1); }
+      50% { transform: scale(0.95); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes valueChange {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+
+    .animate-tab {
+      animation: tabActivate 0.3s ease;
+    }
+
+    .animate-btn {
+      animation: btnPress 0.3s ease;
+    }
+
+    .animate-value {
+      animation: valueChange 0.3s ease;
+      color: var(--primary);
+    }
+
+    .neumorphic-card {
+      background: var(--background);
+      box-shadow: var(--shadow-light), var(--shadow-dark);
+      border-radius: 12px;
+      padding: 16px;
+      transition: all 0.2s ease;
+    }
+
+    .neumorphic-card:active {
+      transform: scale(0.98);
+      box-shadow: var(--shadow-inset-light), var(--shadow-inset-dark);
+    }
+
+    .neumorphic-range {
       -webkit-appearance: none;
       width: 100%;
       height: 6px;
       border-radius: 3px;
-      background: #e5e7eb;
+      background: var(--background);
+      box-shadow: var(--shadow-inset-light), var(--shadow-inset-dark);
       outline: none;
     }
 
-    .input-range::-webkit-slider-thumb {
+    .neumorphic-range::-webkit-slider-thumb {
       -webkit-appearance: none;
       width: 18px;
       height: 18px;
       border-radius: 50%;
-      background: #4f46e5;
+      background: var(--primary);
       cursor: pointer;
-      transition: all 0.3s ease;
+      box-shadow: var(--shadow-light), var(--shadow-dark);
+      transition: all 0.2s ease;
     }
 
-    .input-range::-webkit-slider-thumb:hover {
-      transform: scale(1.1);
+    .neumorphic-range::-webkit-slider-thumb:active {
+      transform: scale(1.2);
+      box-shadow: var(--shadow-inset-light), var(--shadow-inset-dark);
     }
 
-    .tab {
-      transition: all 0.3s ease;
+    canvas {
+      box-shadow: var(--shadow-light), var(--shadow-dark);
     }
 
-    .tab.active {
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    .section-title {
+      position: relative;
+      display: inline-block;
+      padding-bottom: 6px;
+      font-size: 1.5rem;
+    }
+
+    .section-title::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 30px;
+      height: 3px;
+      background: var(--primary);
+      border-radius: 2px;
+    }
+
+    @media (max-width: 640px) {
+      nav {
+        height: 50px;
+      }
+
+      nav .container {
+        padding: 0 16px;
+      }
+
+      nav .logo-icon {
+        width: 32px;
+        height: 32px;
+      }
+
+      nav .logo-text {
+        font-size: 1.1rem;
+      }
+
+      nav .nav-links {
+        gap: 16px;
+      }
+
+      nav .nav-link {
+        font-size: 0.85rem;
+      }
+
+      body {
+        padding-top: 0; /* Noņemam padding-top arī mobilajā skatā */
+      }
+
+      .neumorphic {
+        border-radius: 10px;
+      }
+
+      .neumorphic-btn {
+        padding: 6px 12px;
+        font-size: 0.85rem;
+      }
+
+      .neumorphic-input {
+        padding: 6px 10px;
+        font-size: 0.85rem;
+      }
+
+      .neumorphic-tab {
+        padding: 4px 8px;
+        font-size: 0.85rem;
+      }
+
+      .neumorphic-card {
+        padding: 12px;
+      }
+
+      .section-title {
+        font-size: 1.25rem;
+      }
+    }
+
+    /* Pievienojam papildus stili navigācijas elementiem */
+    nav .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    nav .logo-icon {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--primary);
+      border-radius: 10px;
+      box-shadow: var(--shadow-light), var(--shadow-dark);
+    }
+
+    nav .logo-text {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    nav .nav-links {
+      display: flex;
+      gap: 24px;
+    }
+
+    nav .nav-link {
+      color: var(--text);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s ease;
+    }
+
+    nav .nav-link:hover {
+      color: var(--primary);
+    }
+
+    .neumorphic-btn-danger {
+      background: #ff7675;
+      color: white;
+    }
+
+    .neumorphic-btn-danger:hover {
+      border-color: white;
+    }
+
+    .neumorphic-btn-active {
+      background: var(--primary);
+      color: white;
+      box-shadow: var(--shadow-inset-light), var(--shadow-inset-dark);
+    }
+
+    .neumorphic-btn-active:hover {
+      border-color: white;
+    }
+
+    .area-preview {
+      position: absolute;
+      pointer-events: none;
+      border: 2px dashed var(--primary);
+      background: var(--primary) + '20';
+      z-index: 1000;
+    }
+
+    .area-list-item {
+      transition: all 0.2s ease;
+    }
+
+    .area-list-item:hover {
+      transform: translateX(4px);
+    }
+
+    .area-list-item.selected {
+      background: var(--primary) + '20';
+      border-left: 3px solid var(--primary);
     }
   </style>
 </head>
 
-<body class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
-  <div class="container mx-auto px-4 py-8">
-    <h1 class="text-4xl font-bold text-center mb-8 text-gray-800 animate-fade-in">
-      <i class="fas fa-maze mr-2"></i>
-      Labirinta Ģenerators
-    </h1>
-
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-      <!-- Labirinta attēls -->
-      <div class="lg:col-span-2 animate-fade-in">
-        <div class="relative">
-          <canvas id="maze" width="1000" height="1000" class="w-full bg-white shadow-lg"></canvas>
-          <div class="absolute top-4 right-4 space-x-2">
-            <button id="downloadBtn"
-              class="btn bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg shadow-lg">
-              <i class="fas fa-download mr-2"></i>
-              Lejupielādēt
-            </button>
-            <button id="generateBtn"
-              class="btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-lg">
-              <i class="fas fa-sync-alt mr-2"></i>
-              Ģenerēt jaunu
-            </button>
+<body class="min-h-screen">
+  <!-- Navigation -->
+  <nav>
+    <div class="container">
+      <div class="flex justify-between items-center">
+        <div class="logo-container">
+          <div class="logo-icon">
+            <i class="fas fa-maze text-xl text-white"></i>
           </div>
+          <span class="logo-text">Maze Generator</span>
+        </div>
+        <div class="nav-links">
+          <a href="#how-to-use" class="nav-link">How to Use</a>
+          <a href="#faq" class="nav-link">FAQ</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <div class="container mx-auto px-3 pt-24 pb-8">
+    <div class="text-center mb-8">
+      <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-800 mb-4">
+        <span class="text-primary">World's Best</span> Maze Generator
+      </h1>
+      <p class="text-base sm:text-lg text-gray-600 mb-6">
+        Create stunning mazes instantly - 100% free, no ads, no registration required
+      </p>
+    </div>
+
+    <!-- Main Content -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-6">
+      <!-- Maze Canvas -->
+      <div class="lg:col-span-2">
+        <div class="relative neumorphic p-3 sm:p-6">
+          <canvas id="maze" width="1000" height="1000" class="w-full"></canvas>
         </div>
       </div>
 
-      <!-- Konfigurācijas panelis -->
-      <div class="bg-white p-6 rounded-lg shadow-lg animate-slide-in">
-        <h2 class="text-xl font-semibold mb-6 text-gray-800 flex items-center">
-          <i class="fas fa-cog mr-2"></i>
-          Konfigurācija
-        </h2>
+      <!-- Configuration Panel -->
+      <div class="neumorphic p-3 sm:p-6">
+        <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3 justify-center mb-6">
+          <button id="generateBtn" class="neumorphic-btn neumorphic-btn-primary flex items-center justify-center">
+            <i class="fas fa-sync-alt mr-2"></i>
+            Generate
+          </button>
+          <button id="downloadBtn" class="neumorphic-btn neumorphic-btn-success flex items-center justify-center">
+            <i class="fas fa-download mr-2"></i>
+            Download
+          </button>
+        </div>
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-lg sm:text-xl font-semibold text-gray-800 flex items-center">
+            <i class="fas fa-cog mr-2 text-primary"></i>
+            Configuration
+          </h2>
+        </div>
 
         <!-- Tabs -->
-        <div class="flex space-x-2 mb-6">
-          <button class="tab active px-4 py-2 rounded-lg bg-blue-500 text-white" data-tab="main">
-            <i class="fas fa-sliders-h mr-2"></i>
-            Galvenie
+        <div class="flex flex-wrap gap-2 mb-6">
+          <button class="neumorphic-tab active px-3 py-1.5 text-gray-700" data-tab="main">
+            <i class="fas fa-sliders-h mr-1.5"></i>
+            Main
           </button>
-          <button class="tab px-4 py-2 rounded-lg bg-gray-200 text-gray-700" data-tab="areas">
-            <i class="fas fa-map mr-2"></i>
-            Zonas
+          <button class="neumorphic-tab px-3 py-1.5 text-gray-700" data-tab="areas">
+            <i class="fas fa-map mr-1.5"></i>
+            Areas
           </button>
-          <button class="tab px-4 py-2 rounded-lg bg-gray-200 text-gray-700" data-tab="random">
-            <i class="fas fa-dice mr-2"></i>
-            Randomizācija
+          <button class="neumorphic-tab px-3 py-1.5 text-gray-700" data-tab="random">
+            <i class="fas fa-dice mr-1.5"></i>
+            Randomization
           </button>
         </div>
 
-        <!-- Galvenie parametri -->
-        <div id="main-tab" class="config-section space-y-4">
-          <div class="grid grid-cols-2 gap-4">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">
-                <i class="fas fa-arrows-alt-h mr-1"></i>
-                Šūnu skaits platumā
+        <!-- Main Parameters -->
+        <div id="main-tab" class="space-y-3">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div class="neumorphic p-3">
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                <i class="fas fa-arrows-alt-h mr-1.5 text-primary"></i>
+                Width Cells
               </label>
-              <input type="number" id="cols" value="25" min="10" max="50"
-                class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-all duration-200">
+              <input type="number" id="cols" value="25" min="10" max="50" class="neumorphic-input">
             </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">
-                <i class="fas fa-arrows-alt-v mr-1"></i>
-                Šūnu skaits augstumā
+            <div class="neumorphic p-3">
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                <i class="fas fa-arrows-alt-v mr-1.5 text-primary"></i>
+                Height Cells
               </label>
-              <input type="number" id="rows" value="25" min="10" max="50"
-                class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-all duration-200">
+              <input type="number" id="rows" value="25" min="10" max="50" class="neumorphic-input">
             </div>
+          </div>
+          <div class="neumorphic p-3">
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              <i class="fas fa-tachometer-alt mr-1.5 text-primary"></i>
+              Generation Speed
+            </label>
+            <input type="range" id="generationSpeed" min="1" max="20" value="5" class="neumorphic-range">
+            <div class="text-sm text-gray-500 mt-1" id="generationSpeedValue">5ms</div>
           </div>
         </div>
 
-        <!-- Zonas -->
-        <div id="areas-tab" class="config-section space-y-6 hidden">
-          <!-- Sākuma zona -->
-          <div class="p-4 bg-gray-50 rounded-lg">
+        <!-- Areas -->
+        <div id="areas-tab" class="space-y-4 hidden">
+          <!-- Area Controls -->
+          <div class="neumorphic p-3">
             <h3 class="font-medium text-gray-700 mb-4 flex items-center">
-              <i class="fas fa-flag-checkered mr-2"></i>
-              Sākuma zona
+              <i class="fas fa-draw-polygon mr-2 text-primary"></i>
+              Area Controls
             </h3>
-            <div class="grid grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">X koordināte</label>
-                <input type="number" id="startX" value="0" min="0"
-                  class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                <label class="block text-sm font-medium text-gray-700 mb-1.5">Area Type</label>
+                <select id="areaType" class="neumorphic-input">
+                  <option value="start">Start Area</option>
+                  <option value="checkpoint">Checkpoint Area</option>
+                  <option value="finish">Finish Area</option>
+                </select>
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Y koordināte</label>
-                <input type="number" id="startY" value="0" min="0"
-                  class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                <label class="block text-sm font-medium text-gray-700 mb-1.5">Area Size</label>
+                <select id="areaSize" class="neumorphic-input">
+                  <option value="small">Small (3x3)</option>
+                  <option value="medium">Medium (5x5)</option>
+                  <option value="large">Large (7x7)</option>
+                </select>
               </div>
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Platums</label>
-                <input type="number" id="startW" value="3" min="2"
-                  class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
               </div>
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Augstums</label>
-                <input type="number" id="startH" value="3" min="2"
-                  class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-              </div>
+            <div class="flex gap-2 mt-4">
+              <button id="drawAreaBtn" class="neumorphic-btn neumorphic-btn-primary flex-1">
+                <i class="fas fa-draw-polygon mr-2"></i>
+                Draw Area
+              </button>
+              <button id="deleteAreaBtn" class="neumorphic-btn neumorphic-btn-danger flex-1">
+                <i class="fas fa-trash mr-2"></i>
+                Delete Area
+              </button>
             </div>
           </div>
 
-          <!-- Kontrolpunkta zona -->
-          <div class="p-4 bg-gray-50 rounded-lg">
+          <!-- Active Areas List -->
+          <div class="neumorphic p-3">
             <h3 class="font-medium text-gray-700 mb-4 flex items-center">
-              <i class="fas fa-check-circle mr-2"></i>
-              Kontrolpunkta zona
+              <i class="fas fa-list mr-2 text-secondary"></i>
+              Active Areas
             </h3>
-            <div class="grid grid-cols-2 gap-4">
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">X koordināte</label>
-                <input type="number" id="checkpointX" value="11" min="0"
-                  class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+            <div id="activeAreasList" class="space-y-2">
+              <!-- Areas will be added here dynamically -->
               </div>
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Y koordināte</label>
-                <input type="number" id="checkpointY" value="11" min="0"
-                  class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-              </div>
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Platums</label>
-                <input type="number" id="checkpointW" value="6" min="2"
-                  class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-              </div>
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Augstums</label>
-                <input type="number" id="checkpointH" value="6" min="2"
-                  class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-              </div>
-            </div>
-          </div>
-
-          <!-- Beigu zona -->
-          <div class="p-4 bg-gray-50 rounded-lg">
-            <h3 class="font-medium text-gray-700 mb-4 flex items-center">
-              <i class="fas fa-flag mr-2"></i>
-              Beigu zona
-            </h3>
-            <div class="grid grid-cols-2 gap-4">
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">X koordināte</label>
-                <input type="number" id="finishX" value="22" min="0"
-                  class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-              </div>
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Y koordināte</label>
-                <input type="number" id="finishY" value="22" min="0"
-                  class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-              </div>
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Platums</label>
-                <input type="number" id="finishW" value="3" min="2"
-                  class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-              </div>
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Augstums</label>
-                <input type="number" id="finishH" value="3" min="2"
-                  class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-              </div>
-            </div>
           </div>
         </div>
 
-        <!-- Randomizācijas parametri -->
-        <div id="random-tab" class="config-section space-y-6 hidden">
-          <div class="p-4 bg-gray-50 rounded-lg">
+        <!-- Randomization Parameters -->
+        <div id="random-tab" class="space-y-4 hidden">
+          <div class="neumorphic p-4">
             <h3 class="font-medium text-gray-700 mb-4 flex items-center">
-              <i class="fas fa-random mr-2"></i>
-              Randomizācijas parametri
+              <i class="fas fa-random mr-2 text-purple-500"></i>
+              Randomization Parameters
             </h3>
             <div class="space-y-4">
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">
-                  <i class="fas fa-code-branch mr-1"></i>
-                  Minimālais atzarojumu skaits
+                <label class="block text-sm font-medium text-gray-700 mb-1.5">
+                  <i class="fas fa-code-branch mr-1.5 text-purple-500"></i>
+                  Minimum Branches
                 </label>
-                <input type="number" id="minBranches" value="30" min="10"
-                  class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                <input type="number" id="minBranches" value="30" min="10" class="neumorphic-input">
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">
-                  <i class="fas fa-code-branch mr-1"></i>
-                  Maksimālais atzarojumu skaits
+                <label class="block text-sm font-medium text-gray-700 mb-1.5">
+                  <i class="fas fa-code-branch mr-1.5 text-purple-500"></i>
+                  Maximum Branches
                 </label>
-                <input type="number" id="maxBranches" value="45" min="20"
-                  class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                <input type="number" id="maxBranches" value="45" min="20" class="neumorphic-input">
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">
-                  <i class="fas fa-ruler mr-1"></i>
-                  Minimālais attālums starp atzarojumiem
+                <label class="block text-sm font-medium text-gray-700 mb-1.5">
+                  <i class="fas fa-ruler mr-1.5 text-purple-500"></i>
+                  Minimum Distance Between Branches
                 </label>
-                <input type="number" id="minDistance" value="3" min="1"
-                  class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                <input type="number" id="minDistance" value="3" min="1" class="neumorphic-input">
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">
-                  <i class="fas fa-percentage mr-1"></i>
-                  Varbūtība mainīt virzienu pie malas
+                <label class="block text-sm font-medium text-gray-700 mb-1.5">
+                  <i class="fas fa-percentage mr-1.5 text-purple-500"></i>
+                  Edge Direction Change Probability
                 </label>
-                <input type="range" id="edgeChangeProb" min="0" max="100" value="95" class="input-range">
+                <input type="range" id="edgeChangeProb" min="0" max="100" value="95" class="neumorphic-range">
                 <div class="text-sm text-gray-500 mt-1" id="edgeChangeProbValue">95%</div>
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">
-                  <i class="fas fa-percentage mr-1"></i>
-                  Varbūtība mainīt virzienu
+                <label class="block text-sm font-medium text-gray-700 mb-1.5">
+                  <i class="fas fa-percentage mr-1.5 text-purple-500"></i>
+                  Direction Change Probability
                 </label>
-                <input type="range" id="changeProb" min="0" max="100" value="85" class="input-range">
+                <input type="range" id="changeProb" min="0" max="100" value="85" class="neumorphic-range">
                 <div class="text-sm text-gray-500 mt-1" id="changeProbValue">85%</div>
               </div>
             </div>
@@ -330,42 +577,286 @@
         </div>
       </div>
     </div>
+
+    <!-- How to Use Section -->
+    <div id="how-to-use" class="mt-24 p-8">
+      <h2 class="text-2xl font-bold mb-8 text-center section-title">How to Use</h2>
+      
+      <!-- Quick Start Guide -->
+      <div class="neumorphic p-8 mb-12">
+        <div class="flex items-center mb-8">
+          <div class="w-16 h-16 rounded-xl bg-primary flex items-center justify-center mr-6">
+            <i class="fas fa-rocket text-3xl text-white"></i>
+          </div>
+          <div>
+            <h3 class="text-2xl font-semibold text-gray-800">Quick Start Guide</h3>
+            <p class="text-gray-600 mt-2">Create your first maze in 4 simple steps</p>
+          </div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div class="neumorphic p-4 hover:scale-105 transition-transform duration-200">
+            <div class="w-12 h-12 rounded-lg bg-primary/10 text-primary flex items-center justify-center mb-4">
+              <i class="fas fa-ruler text-xl"></i>
+            </div>
+            <h4 class="font-medium text-gray-800 mb-2">1. Set Size</h4>
+            <p class="text-sm text-gray-600">Choose width and height (10-50 cells)</p>
+          </div>
+          
+          <div class="neumorphic p-4 hover:scale-105 transition-transform duration-200">
+            <div class="w-12 h-12 rounded-lg bg-primary/10 text-primary flex items-center justify-center mb-4">
+              <i class="fas fa-map-marker-alt text-xl"></i>
+            </div>
+            <h4 class="font-medium text-gray-800 mb-2">2. Place Areas</h4>
+            <p class="text-sm text-gray-600">Set start, checkpoint, and finish points</p>
+          </div>
+          
+          <div class="neumorphic p-4 hover:scale-105 transition-transform duration-200">
+            <div class="w-12 h-12 rounded-lg bg-primary/10 text-primary flex items-center justify-center mb-4">
+              <i class="fas fa-magic text-xl"></i>
+            </div>
+            <h4 class="font-medium text-gray-800 mb-2">3. Generate</h4>
+            <p class="text-sm text-gray-600">Click generate to create your maze</p>
+          </div>
+          
+          <div class="neumorphic p-4 hover:scale-105 transition-transform duration-200">
+            <div class="w-12 h-12 rounded-lg bg-primary/10 text-primary flex items-center justify-center mb-4">
+              <i class="fas fa-download text-xl"></i>
+            </div>
+            <h4 class="font-medium text-gray-800 mb-2">4. Download</h4>
+            <p class="text-sm text-gray-600">Save your maze as an image</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Basic Settings -->
+      <div class="neumorphic p-6 mb-8">
+        <div class="flex items-center mb-6">
+          <div class="w-12 h-12 rounded-lg bg-secondary flex items-center justify-center mr-4">
+            <i class="fas fa-cog text-2xl text-white"></i>
+          </div>
+          <h3 class="text-xl font-semibold text-gray-800">Basic Settings</h3>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="neumorphic p-4">
+            <h4 class="font-medium text-gray-800 mb-2 flex items-center">
+              <i class="fas fa-ruler text-secondary mr-2"></i>
+              Maze Size
+            </h4>
+            <p class="text-sm text-gray-600">Choose between 10x10 and 50x50 cells. Larger mazes are more complex but take longer to generate.</p>
+          </div>
+          <div class="neumorphic p-4">
+            <h4 class="font-medium text-gray-800 mb-2 flex items-center">
+              <i class="fas fa-map text-secondary mr-2"></i>
+              Areas
+            </h4>
+            <p class="text-sm text-gray-600">Place start (green), checkpoint (yellow), and finish (red) areas to create your maze path.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Advanced Settings -->
+      <div class="neumorphic p-6 mb-8">
+        <div class="flex items-center mb-6">
+          <div class="w-12 h-12 rounded-lg bg-accent flex items-center justify-center mr-4">
+            <i class="fas fa-sliders-h text-2xl text-white"></i>
+          </div>
+          <h3 class="text-xl font-semibold text-gray-800">Advanced Settings</h3>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="neumorphic p-4">
+            <h4 class="font-medium text-gray-800 mb-2 flex items-center">
+              <i class="fas fa-code-branch text-accent mr-2"></i>
+              Branches
+            </h4>
+            <p class="text-sm text-gray-600">Control maze complexity by setting minimum (10-20) and maximum (20-50) branches.</p>
+          </div>
+          <div class="neumorphic p-4">
+            <h4 class="font-medium text-gray-800 mb-2 flex items-center">
+              <i class="fas fa-compass text-accent mr-2"></i>
+              Direction
+            </h4>
+            <p class="text-sm text-gray-600">Adjust probabilities (0-100%) to control path patterns and maze style.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tips -->
+      <div class="neumorphic p-6">
+        <div class="flex items-center mb-6">
+          <div class="w-12 h-12 rounded-lg bg-primary flex items-center justify-center mr-4">
+            <i class="fas fa-lightbulb text-2xl text-white"></i>
+          </div>
+          <h3 class="text-xl font-semibold text-gray-800">Pro Tips</h3>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="neumorphic p-4">
+            <h4 class="font-medium text-gray-800 mb-2 flex items-center">
+              <i class="fas fa-check-circle text-primary mr-2"></i>
+              Start Small
+            </h4>
+            <p class="text-sm text-gray-600">Begin with 15x15 mazes to test your settings</p>
+          </div>
+          <div class="neumorphic p-4">
+            <h4 class="font-medium text-gray-800 mb-2 flex items-center">
+              <i class="fas fa-check-circle text-primary mr-2"></i>
+              Use Checkpoints
+            </h4>
+            <p class="text-sm text-gray-600">Create multiple paths with strategic checkpoint placement</p>
+          </div>
+          <div class="neumorphic p-4">
+            <h4 class="font-medium text-gray-800 mb-2 flex items-center">
+              <i class="fas fa-check-circle text-primary mr-2"></i>
+              Experiment
+            </h4>
+            <p class="text-sm text-gray-600">Try different settings to find your perfect maze style</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FAQ Section -->
+    <div id="faq" class="mt-12 sm:mt-24 p-4 sm:p-6">
+      <h2 class="text-xl sm:text-2xl font-bold mb-6 sm:mb-8 text-center section-title">Frequently Asked Questions</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+        <div class="neumorphic-card">
+          <div class="flex items-start space-x-3">
+            <div class="neumorphic py-2 px-4 rounded-lg">
+              <i class="fas fa-question-circle text-primary text-lg"></i>
+            </div>
+            <div>
+              <h3 class="text-base sm:text-lg font-semibold mb-1.5 text-gray-800">Is this maze generator really free?</h3>
+              <p class="text-sm sm:text-base text-gray-600">Yes, our maze generator is completely free to use with no hidden costs or ads. Create unlimited mazes without any restrictions.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="neumorphic-card">
+          <div class="flex items-start space-x-3">
+            <div class="neumorphic py-2 px-4 rounded-lg">
+              <i class="fas fa-puzzle-piece text-secondary text-lg"></i>
+            </div>
+            <div>
+              <h3 class="text-base sm:text-lg font-semibold mb-1.5 text-gray-800">What can I use the generated mazes for?</h3>
+              <p class="text-sm sm:text-base text-gray-600">You can use the mazes for games, educational purposes, puzzles, or any other creative projects. Perfect for teachers, game developers, and puzzle enthusiasts.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="neumorphic-card">
+          <div class="flex items-start space-x-3">
+            <div class="neumorphic py-2 px-3 rounded-lg">
+              <i class="fas fa-sliders-h text-accent text-lg"></i>
+            </div>
+            <div>
+              <h3 class="text-base sm:text-lg font-semibold mb-1.5 text-gray-800">How do I customize the maze?</h3>
+              <p class="text-sm sm:text-base text-gray-600">Use the configuration panel to adjust size, areas, and randomization parameters. Create unique mazes with start, checkpoint, and finish areas.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="neumorphic-card">
+          <div class="flex items-start space-x-3">
+            <div class="neumorphic py-2 px-3 rounded-lg">
+              <i class="fas fa-ruler text-primary text-lg"></i>
+            </div>
+            <div>
+              <h3 class="text-base sm:text-lg font-semibold mb-1.5 text-gray-800">What's the maximum maze size?</h3>
+              <p class="text-sm sm:text-base text-gray-600">The maximum size is 50x50 cells, which provides a good balance between complexity and usability. Perfect for both simple and challenging mazes.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="mt-12 sm:mt-24 py-4 sm:py-6 neumorphic">
+      <div class="container mx-auto px-3 text-center text-sm text-gray-600">
+        <p>© 2024 Maze Generator. All rights reserved.</p>
+      </div>
+    </footer>
   </div>
 
   <script>
     // Pievienojam tab funkcionalitāti
-    document.querySelectorAll('.tab').forEach(tab => {
+    document.querySelectorAll('.neumorphic-tab').forEach(tab => {
       tab.addEventListener('click', () => {
+        // Pievienojam animācijas klasi
+        tab.classList.add('animate-tab');
+        
         // Noņemam active klasi no visiem tabiem
-        document.querySelectorAll('.tab').forEach(t => {
+        document.querySelectorAll('.neumorphic-tab').forEach(t => {
           t.classList.remove('active');
-          t.classList.remove('bg-blue-500', 'text-white');
-          t.classList.add('bg-gray-200', 'text-gray-700');
+          t.classList.remove('bg-primary', 'text-white');
+          t.classList.add('text-gray-700');
         });
 
         // Pievienojam active klasi pašreizējam tabam
         tab.classList.add('active');
-        tab.classList.remove('bg-gray-200', 'text-gray-700');
-        tab.classList.add('bg-blue-500', 'text-white');
+        tab.classList.remove('text-gray-700');
+        tab.classList.add('bg-primary', 'text-white');
 
         // Paslēpjam visus tab saturus
-        document.querySelectorAll('.config-section').forEach(section => {
+        document.querySelectorAll('[id$="-tab"]').forEach(section => {
           section.classList.add('hidden');
         });
 
-        // Parādam atbilstošo saturu
+        // Parādam atbilstošo saturu ar animāciju
         const tabId = tab.getAttribute('data-tab');
-        document.getElementById(`${tabId}-tab`).classList.remove('hidden');
+        const targetSection = document.getElementById(`${tabId}-tab`);
+        if (targetSection) {
+          targetSection.classList.remove('hidden');
+          targetSection.style.opacity = '0';
+          targetSection.style.transform = 'translateY(10px)';
+          
+          setTimeout(() => {
+            targetSection.style.transition = 'all 0.3s ease';
+            targetSection.style.opacity = '1';
+            targetSection.style.transform = 'translateY(0)';
+          }, 50);
+        }
+
+        // Noņemam animācijas klasi pēc animācijas beigām
+        setTimeout(() => {
+          tab.classList.remove('animate-tab');
+        }, 300);
       });
     });
 
-    // Pievienojam range input vērtību atjaunināšanu
+    // Pievienojam pogu animācijas
+    document.querySelectorAll('.neumorphic-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        // Pievienojam animācijas klasi
+        btn.classList.add('animate-btn');
+        
+        // Noņemam animācijas klasi pēc animācijas beigām
+        setTimeout(() => {
+          btn.classList.remove('animate-btn');
+        }, 300);
+      });
+    });
+
+    // Pievienojam range input vērtību atjaunināšanu ar animāciju
     document.getElementById('edgeChangeProb').addEventListener('input', (e) => {
-      document.getElementById('edgeChangeProbValue').textContent = `${e.target.value}%`;
+      const valueDisplay = document.getElementById('edgeChangeProbValue');
+      valueDisplay.textContent = `${e.target.value}%`;
+      valueDisplay.classList.add('animate-value');
+      setTimeout(() => valueDisplay.classList.remove('animate-value'), 300);
     });
 
     document.getElementById('changeProb').addEventListener('input', (e) => {
-      document.getElementById('changeProbValue').textContent = `${e.target.value}%`;
+      const valueDisplay = document.getElementById('changeProbValue');
+      valueDisplay.textContent = `${e.target.value}%`;
+      valueDisplay.classList.add('animate-value');
+      setTimeout(() => valueDisplay.classList.remove('animate-value'), 300);
+    });
+
+    // Pievienojam ātruma regulēšanas apstrādi
+    document.getElementById('generationSpeed').addEventListener('input', (e) => {
+      const valueDisplay = document.getElementById('generationSpeedValue');
+      valueDisplay.textContent = `${e.target.value}ms`;
+      valueDisplay.classList.add('animate-value');
+      setTimeout(() => valueDisplay.classList.remove('animate-value'), 300);
     });
   </script>
 
@@ -378,691 +869,203 @@
       let rows = 25;
       let cellSize = canvas.width / cols;
       let grid = [];
+      let largeAreas = [];
+      let isDrawingArea = false;
+      let selectedArea = null;
+      let drawingStartX = 0;
+      let drawingStartY = 0;
+      let currentArea = null;
 
-      class Cell {
-        constructor(x, y) {
-          this.x = x;
-          this.y = y;
-          this.visited = false;
-          this.blocked = false;
-          this.walls = [true, true, true, true]; // top, right, bottom, left
-          this.color = '#FFFFFF'; // Mainām noklusēto krāsu uz baltu
-        }
-
-        draw() {
-          const x = this.x * cellSize;
-          const y = this.y * cellSize;
-
-          // Vispirms aizpildam šūnu ar baltu krāsu
-          ctx.fillStyle = this.color;
-          ctx.fillRect(x, y, cellSize, cellSize);
-
-          // Tad zīmējam sienas
-          ctx.strokeStyle = "black";
-          ctx.lineWidth = 2;
-          if (this.walls[0]) drawLine(x, y, x + cellSize, y);
-          if (this.walls[1]) drawLine(x + cellSize, y, x + cellSize, y + cellSize);
-          if (this.walls[2]) drawLine(x + cellSize, y + cellSize, x, y + cellSize);
-          if (this.walls[3]) drawLine(x, y + cellSize, x, y);
+      // Pievienojam laukumu pārvaldības funkcijas
+      function getAreaSize(size) {
+        switch(size) {
+          case 'small': return { w: 3, h: 3 };
+          case 'medium': return { w: 5, h: 5 };
+          case 'large': return { w: 7, h: 7 };
+          default: return { w: 3, h: 3 };
         }
       }
 
-      function drawLine(x1, y1, x2, y2) {
+      function getAreaColor(type) {
+        switch(type) {
+          case 'start': return '#00b894';
+          case 'checkpoint': return '#fdcb6e';
+          case 'finish': return '#ff7675';
+          default: return '#6c5ce7';
+        }
+      }
+
+      function createArea(x, y, type, size) {
+        const dimensions = getAreaSize(size);
+        return {
+          x: Math.floor(x),
+          y: Math.floor(y),
+          w: dimensions.w,
+          h: dimensions.h,
+          type: type,
+          entry: { x: Math.floor(dimensions.w/2), y: 0 },
+          exit: { x: Math.floor(dimensions.w/2), y: dimensions.h - 1 }
+        };
+      }
+
+      function drawArea(area) {
+        const color = getAreaColor(area.type);
+        ctx.fillStyle = color + '40'; // Pievienojam caurspīdīgumu
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2;
+
+        const x = area.x * cellSize;
+        const y = area.y * cellSize;
+        const width = area.w * cellSize;
+        const height = area.h * cellSize;
+
+        ctx.fillRect(x, y, width, height);
+        ctx.strokeRect(x, y, width, height);
+
+        // Zīmējam entry un exit punktus
+        ctx.fillStyle = color;
         ctx.beginPath();
-        ctx.moveTo(x1, y1);
-        ctx.lineTo(x2, y2);
-        ctx.stroke();
+        ctx.arc(x + area.entry.x * cellSize + cellSize/2, 
+               y + area.entry.y * cellSize + cellSize/2, 
+               cellSize/4, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(x + area.exit.x * cellSize + cellSize/2, 
+               y + area.exit.y * cellSize + cellSize/2, 
+               cellSize/4, 0, Math.PI * 2);
+        ctx.fill();
       }
 
-      function index(x, y) {
-        if (x < 0 || y < 0 || x >= cols || y >= rows) return -1;
-        return x + y * cols;
+      function drawAreas() {
+        largeAreas.forEach(area => drawArea(area));
       }
 
-      function getCell(x, y) {
-        return grid[index(x, y)];
+      function isPointInArea(x, y, area) {
+        return x >= area.x && x < area.x + area.w &&
+               y >= area.y && y < area.y + area.h;
       }
 
-      // 1. Setup grid
-      for (let y = 0; y < rows; y++) {
-        for (let x = 0; x < cols; x++) {
-          grid.push(new Cell(x, y));
-        }
+      function findAreaAt(x, y) {
+        return largeAreas.find(area => isPointInArea(x, y, area));
       }
 
-      // 2. Define large areas to ignore during generation
-      let largeAreas = [
-        { x: 0, y: 0, w: 3, h: 3, type: 'start', entry: { x: 2, y: 1 }, exit: { x: 2, y: 2 } },
-        { x: Math.floor(cols / 2) - 3, y: Math.floor(rows / 2) - 3, w: 6, h: 6, type: 'checkpoint', entry: { x: 0, y: 1 }, exit: { x: 2, y: 1 } },
-        { x: cols - 3, y: rows - 3, w: 3, h: 3, type: 'finish', entry: { x: 0, y: 1 }, exit: { x: 0, y: 2 } }
-      ];
-
-      function markBlockedAreas() {
-        largeAreas.forEach(area => {
-          for (let dy = 0; dy < area.h; dy++) {
-            for (let dx = 0; dx < area.w; dx++) {
-              const cell = getCell(area.x + dx, area.y + dy);
-              if (cell) {
-                cell.visited = true;
-                cell.color = '#FFFFFF'; // Mainām uz baltu
-
-                // Noņemam sienas iekšējām šūnām
-                if (dx > 0) cell.walls[3] = false;
-                if (dx < area.w - 1) cell.walls[1] = false;
-                if (dy > 0) cell.walls[0] = false;
-                if (dy < area.h - 1) cell.walls[2] = false;
-
-                cell.blocked = dx === 0 || dx === area.w - 1 || dy === 0 || dy === area.h - 1;
-              }
-            }
-          }
+      function updateActiveAreasList() {
+        const list = document.getElementById('activeAreasList');
+        list.innerHTML = '';
+        
+        largeAreas.forEach((area, index) => {
+          const item = document.createElement('div');
+          item.className = 'neumorphic p-2 flex items-center justify-between';
+          
+          const color = getAreaColor(area.type);
+          const size = Object.entries({small: '3x3', medium: '5x5', large: '7x7'})
+            .find(([key, value]) => area.w === parseInt(value.split('x')[0]))[1];
+          
+          item.innerHTML = `
+            <div class="flex items-center">
+              <div class="w-4 h-4 rounded-full mr-2" style="background-color: ${color}"></div>
+              <span class="text-sm">${area.type.charAt(0).toUpperCase() + area.type.slice(1)} (${size})</span>
+            </div>
+            <button class="neumorphic-btn neumorphic-btn-danger text-sm" onclick="removeArea(${index})">
+              <i class="fas fa-trash"></i>
+            </button>
+          `;
+          
+          list.appendChild(item);
         });
       }
 
-      function createMainPath() {
-        const startArea = largeAreas[0];
-        const checkpointArea = largeAreas[1];
-        const finishArea = largeAreas[2];
-
-        // Start from start area exit
-        let currentX = startArea.x + startArea.exit.x;
-        let currentY = startArea.y + startArea.exit.y;
-
-        // First path: start to checkpoint
-        while (currentX < checkpointArea.x + checkpointArea.entry.x || currentY < checkpointArea.y + checkpointArea.entry.y) {
-          const cell = getCell(currentX, currentY);
-          if (cell) {
-            cell.visited = true;
-            cell.color = '#4CAF50';
-
-            // Randomly choose direction
-            const shouldMoveHorizontal = Math.random() < 0.5;
-            if (shouldMoveHorizontal && currentX < checkpointArea.x + checkpointArea.entry.x) {
-              removeWallBetween(cell, getCell(currentX + 1, currentY));
-              currentX++;
-            } else if (currentY < checkpointArea.y + checkpointArea.entry.y) {
-              removeWallBetween(cell, getCell(currentX, currentY + 1));
-              currentY++;
-            } else {
-              removeWallBetween(cell, getCell(currentX + 1, currentY));
-              currentX++;
-            }
-          }
-        }
-
-        // Second path: checkpoint to finish
-        while (currentX < finishArea.x + finishArea.entry.x || currentY < finishArea.y + finishArea.entry.y) {
-          const cell = getCell(currentX, currentY);
-          if (cell) {
-            cell.visited = true;
-            cell.color = '#4CAF50';
-
-            // Randomly choose direction
-            const shouldMoveHorizontal = Math.random() < 0.5;
-            if (shouldMoveHorizontal && currentX < finishArea.x + finishArea.entry.x) {
-              removeWallBetween(cell, getCell(currentX + 1, currentY));
-              currentX++;
-            } else if (currentY < finishArea.y + finishArea.entry.y) {
-              removeWallBetween(cell, getCell(currentX, currentY + 1));
-              currentY++;
-            } else {
-              removeWallBetween(cell, getCell(currentX + 1, currentY));
-              currentX++;
-            }
-          }
-        }
-      }
-
-      function getUnvisitedNeighbors(cell) {
-        const directions = [
-          { dx: 0, dy: -1, dir: 0 },
-          { dx: 1, dy: 0, dir: 1 },
-          { dx: 0, dy: 1, dir: 2 },
-          { dx: -1, dy: 0, dir: 3 }
-        ];
-        const neighbors = [];
-
-        directions.forEach(({ dx, dy, dir }) => {
-          const nx = cell.x + dx;
-          const ny = cell.y + dy;
-          const neighbor = getCell(nx, ny);
-          if (neighbor && !neighbor.visited && !neighbor.blocked) {
-            // Pārbaudām tikai tiešos kaimiņus
-            const hasVisitedNeighbor = directions.some(({ dx: ddx, dy: ddy }) => {
-              const checkX = nx + ddx;
-              const checkY = ny + ddy;
-              const checkCell = getCell(checkX, checkY);
-              return checkCell && checkCell.visited && checkCell !== cell;
-            });
-
-            if (!hasVisitedNeighbor || Math.random() < 0.3) { // 30% iespēja turpināt pat ja ir kaimiņš
-              neighbors.push({ cell: neighbor, dir });
-            }
-          }
-        });
-        return neighbors;
-      }
-
-      function removeWallBetween(a, b) {
-        const dx = b.x - a.x;
-        const dy = b.y - a.y;
-        if (dx === 1) { a.walls[1] = false; b.walls[3] = false; }
-        else if (dx === -1) { a.walls[3] = false; b.walls[1] = false; }
-        else if (dy === 1) { a.walls[2] = false; b.walls[0] = false; }
-        else if (dy === -1) { a.walls[0] = false; b.walls[2] = false; }
-      }
-
-      // Pievienojam globālos mainīgos
-      let isGenerating = false;
-      let generationTimeout = null;
-      let stack = [];
-      let activeGrowthCount = 0;
-
-      // Funkcija esošās ģenerēšanas apstādināšanai
-      function stopGeneration() {
-        isGenerating = false;
-        if (generationTimeout) {
-          clearTimeout(generationTimeout);
-          generationTimeout = null;
-        }
-        stack = [];
-        activeGrowthCount = 0;
-      }
-
-      // Atjaunojam generateMazeStep funkciju
-      function generateMazeStep(current) {
-        if (!isGenerating) return;
-
-        current.visited = true;
-        current.color = '#2196F3';
-        const neighbors = getUnvisitedNeighbors(current);
-
-        if (neighbors.length > 0) {
-          const lastDirection = stack.length > 0 ?
-            { dx: current.x - stack[stack.length - 1].x, dy: current.y - stack[stack.length - 1].y } :
-            null;
-
-          let next;
-          if (lastDirection && stack.length > 2) {
-            const isNearEdge = current.x <= 1 || current.x >= cols - 2 || current.y <= 1 || current.y >= rows - 2;
-            const changeDirectionProbability = isNearEdge ? 0.95 : 0.85;
-
-            if (Math.random() < changeDirectionProbability) {
-              const perpendicularNeighbors = neighbors.filter(({ cell }) => {
-                const dx = cell.x - current.x;
-                const dy = cell.y - current.y;
-
-                if (isNearEdge) {
-                  if (current.x <= 1 && dx <= 0) return false;
-                  if (current.x >= cols - 2 && dx >= 0) return false;
-                  if (current.y <= 1 && dy <= 0) return false;
-                  if (current.y >= rows - 2 && dy >= 0) return false;
-                }
-
-                return (dx !== lastDirection.dx && dy !== lastDirection.dy);
-              });
-
-              if (perpendicularNeighbors.length > 0) {
-                next = perpendicularNeighbors[Math.floor(Math.random() * perpendicularNeighbors.length)];
-              } else {
-                const awayFromEdgeNeighbors = neighbors.filter(({ cell }) => {
-                  if (current.x <= 1) return cell.x > current.x;
-                  if (current.x >= cols - 2) return cell.x < current.x;
-                  if (current.y <= 1) return cell.y > current.y;
-                  if (current.y >= rows - 2) return cell.y < current.y;
-                  return true;
-                });
-
-                next = awayFromEdgeNeighbors.length > 0 ?
-                  awayFromEdgeNeighbors[Math.floor(Math.random() * awayFromEdgeNeighbors.length)] :
-                  neighbors[Math.floor(Math.random() * neighbors.length)];
-              }
-            } else {
-              next = neighbors[Math.floor(Math.random() * neighbors.length)];
-            }
-          } else {
-            next = neighbors[Math.floor(Math.random() * neighbors.length)];
-          }
-
-          removeWallBetween(current, next.cell);
-          stack.push(current);
+      // Pievienojam globālo removeArea funkciju
+      window.removeArea = function(index) {
+        largeAreas.splice(index, 1);
+        updateActiveAreasList();
           draw();
-          generationTimeout = setTimeout(() => generateMazeStep(next.cell), 5);
-        } else if (stack.length > 0) {
-          const back = stack.pop();
-          draw();
-          generationTimeout = setTimeout(() => generateMazeStep(back), 5);
-        } else {
-          activeGrowthCount--;
-          if (activeGrowthCount === 0) {
-            generationTimeout = setTimeout(finalizeMaze, 500);
-          }
-        }
-      }
+      };
 
-      function getMainPathCells() {
-        return grid.filter(cell => cell.color === '#4CAF50');
-      }
+      // Pievienojam canvas event listenerus
+      canvas.addEventListener('mousedown', (e) => {
+        if (!isDrawingArea) return;
+        
+        const rect = canvas.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / cellSize;
+        const y = (e.clientY - rect.top) / cellSize;
+        
+        drawingStartX = x;
+        drawingStartY = y;
+        
+        const type = document.getElementById('areaType').value;
+        const size = document.getElementById('areaSize').value;
+        currentArea = createArea(x, y, type, size);
+      });
 
-      function getBranchingPoints() {
-        const mainPathCells = getMainPathCells();
-        const branchingPoints = [];
-
-        mainPathCells.forEach(cell => {
-          const neighbors = getUnvisitedNeighbors(cell);
-          if (neighbors.length >= 1) {
-            if (Math.random() < 0.6) {
-              branchingPoints.push(cell);
-            }
-          }
-        });
-
-        return branchingPoints;
-      }
-
-      function generateBranchFromPoint(startCell) {
-        const neighbors = getUnvisitedNeighbors(startCell);
-        if (neighbors.length > 0) {
-          const { cell: next } = neighbors[Math.floor(Math.random() * neighbors.length)];
-          removeWallBetween(startCell, next);
-          next.visited = true;
-          next.color = '#2196F3';
-          return next;
-        }
-        return null;
-      }
-
-      function generateBranches() {
-        const branchingPoints = getBranchingPoints();
-        if (branchingPoints.length === 0) return;
-
-        const numBranches = Math.floor(Math.random() * 15) + 30;
-        const selectedPoints = [];
-
-        const minDistance = 3;
-
-        for (let i = 0; i < Math.min(numBranches, branchingPoints.length); i++) {
-          let attempts = 0;
-          let found = false;
-
-          while (!found && attempts < 10) {
-            const randomIndex = Math.floor(Math.random() * branchingPoints.length);
-            const point = branchingPoints[randomIndex];
-
-            const isTooClose = selectedPoints.some(selectedPoint => {
-              const dx = Math.abs(point.x - selectedPoint.x);
-              const dy = Math.abs(point.y - selectedPoint.y);
-              return dx + dy < minDistance;
-            });
-
-            if (!isTooClose) {
-              selectedPoints.push(point);
-              branchingPoints.splice(randomIndex, 1);
-              found = true;
-            }
-
-            attempts++;
-          }
-        }
-
-        selectedPoints.forEach(point => {
-          const branchCell = generateBranchFromPoint(point);
-          if (branchCell) {
-            activeGrowthCount++;
-            generateMazeStep(branchCell);
-          }
-        });
-      }
-
-      // Sākotnējā ģenerēšana
-      isGenerating = true;
-      markBlockedAreas();
-      createMainPath();
-      draw();
-      generationTimeout = setTimeout(startBranching, 1000);
-
-      // Tad sākam ģenerēt atzarojumus
-      function startBranching() {
-        if (!isGenerating) return;
-
-        if (activeGrowthCount === 0) {
-          generateBranches();
-          if (activeGrowthCount === 0) {
-            generationTimeout = setTimeout(finalizeMaze, 500);
-          } else {
-            generationTimeout = setTimeout(startBranching, 50);
-          }
-        } else {
-          generationTimeout = setTimeout(startBranching, 50);
-        }
-      }
-
-      function openUnvisitedCells() {
-        const unvisitedCells = grid.filter(cell => !cell.visited && !cell.blocked);
-
-        // Sajaucam neapmeklētās šūnas nejaušā secībā
-        const shuffledCells = unvisitedCells.sort(() => Math.random() - 0.5);
-
-        // Atveram tikai vienu sienu katrai neapmeklētajai šūnai
-        shuffledCells.forEach(cell => {
-          // Ja šūna jau ir apstrādāta (kāds kaimiņš to ir apmeklējis), izlaižam
-          if (cell.visited) return;
-
-          const directions = [
-            { dx: 0, dy: -1, dir: 0, wallIndex: 0 }, // top
-            { dx: 1, dy: 0, dir: 1, wallIndex: 1 },  // right
-            { dx: 0, dy: 1, dir: 2, wallIndex: 2 },  // bottom
-            { dx: -1, dy: 0, dir: 3, wallIndex: 3 }  // left
-          ];
-
-          // Sajaucam virzienus nejaušā secībā
-          const shuffledDirections = directions.sort(() => Math.random() - 0.5);
-
-          // Mēģinām atvērt tikai vienu sienu
-          for (const { dx, dy, wallIndex } of shuffledDirections) {
-            const nx = cell.x + dx;
-            const ny = cell.y + dy;
-            const neighbor = getCell(nx, ny);
-
-            // Pārbaudam vai kaimiņš ir derīgs
-            if (neighbor &&
-              !neighbor.blocked &&
-              neighbor.color !== '#4CAF50' && // Nav galvenā ceļa daļa
-              !largeAreas.some(area =>
-                nx >= area.x && nx < area.x + area.w &&
-                ny >= area.y && ny < area.y + area.h
-              )) {
-
-              // Atveram sienu
-              cell.walls[wallIndex] = false;
-              neighbor.walls[(wallIndex + 2) % 4] = false; // Pretējā siena
-
-              // Atzīmējam abas šūnas kā apmeklētas
-              cell.visited = true;
-              neighbor.visited = true;
-
-              // Iekrāsojam abas šūnas, lai redzētu izmaiņas
-              //dzeltenā
-              cell.color = '#FFD700';
-              // orandžā
-              neighbor.color = '#FFA500';
-
-              break; // Izejam no cikla, jo esam atvēruši vienu sienu
-            }
-          }
-        });
-
+      canvas.addEventListener('mousemove', (e) => {
+        if (!isDrawingArea || !currentArea) return;
+        
+        const rect = canvas.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / cellSize;
+        const y = (e.clientY - rect.top) / cellSize;
+        
+        const dx = x - drawingStartX;
+        const dy = y - drawingStartY;
+        
+        currentArea.x = Math.min(drawingStartX, x);
+        currentArea.y = Math.min(drawingStartY, y);
+        currentArea.w = Math.max(1, Math.abs(dx) + 1);
+        currentArea.h = Math.max(1, Math.abs(dy) + 1);
+        
         draw();
-      }
+        drawAreas();
+        drawArea(currentArea);
+      });
 
-      function finalizeMaze() {
-        // Vispirms atveram sienas neapmeklētajiem blokiem
-        openUnvisitedCells();
+      canvas.addEventListener('mouseup', () => {
+        if (!isDrawingArea || !currentArea) return;
+        
+        // Pārbaudām vai laukums ir derīgs
+        if (currentArea.w >= 2 && currentArea.h >= 2) {
+          largeAreas.push(currentArea);
+          updateActiveAreasList();
+        }
+        
+        currentArea = null;
+      draw();
+        drawAreas();
+      });
 
-        // Tad iestata visām šūnām baltu krāsu
-        setTimeout(() => {
-          grid.forEach(cell => {
-            cell.color = '#FFFFFF';
-          });
-          draw();
-        }, 2000); // Pagaidām 500ms lai varētu redzēt izmaiņas
-      }
+      // Pievienojam pogu event listenerus
+      document.getElementById('drawAreaBtn').addEventListener('click', () => {
+        isDrawingArea = !isDrawingArea;
+        document.getElementById('drawAreaBtn').classList.toggle('neumorphic-btn-active');
+      });
 
-      function draw() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        grid.forEach(cell => cell.draw());
-      }
+      document.getElementById('deleteAreaBtn').addEventListener('click', () => {
+        isDrawingArea = false;
+        document.getElementById('drawAreaBtn').classList.remove('neumorphic-btn-active');
+        selectedArea = null;
+      });
 
-      function downloadMaze() {
-        // Izveidojam jaunu canvas ar augstāku izšķirtspēju
-        const downloadCanvas = document.createElement('canvas');
-        const downloadCtx = downloadCanvas.getContext('2d');
-
-        // Iestatām augstāku izšķirtspēju (4x)
-        const scale = 4;
-        downloadCanvas.width = canvas.width * scale;
-        downloadCanvas.height = canvas.height * scale;
-
-        // Iestatām baltu fona krāsu
-        downloadCtx.fillStyle = '#FFFFFF';
-        downloadCtx.fillRect(0, 0, downloadCanvas.width, downloadCanvas.height);
-
-        // Pārzīmējam labirintu uz jauno canvas ar augstāku izšķirtspēju
-        downloadCtx.scale(scale, scale);
-        grid.forEach(cell => {
-          const x = cell.x * cellSize;
-          const y = cell.y * cellSize;
-
-          // Aizpildām šūnu ar baltu krāsu
-          downloadCtx.fillStyle = '#FFFFFF';
-          downloadCtx.fillRect(x, y, cellSize, cellSize);
-
-          // Zīmējam sienas
-          downloadCtx.strokeStyle = "black";
-          downloadCtx.lineWidth = 2;
-
-          // Zīmējam sienas izmantojot downloadCtx
-          if (cell.walls[0]) {
-            downloadCtx.beginPath();
-            downloadCtx.moveTo(x, y);
-            downloadCtx.lineTo(x + cellSize, y);
-            downloadCtx.stroke();
-          }
-          if (cell.walls[1]) {
-            downloadCtx.beginPath();
-            downloadCtx.moveTo(x + cellSize, y);
-            downloadCtx.lineTo(x + cellSize, y + cellSize);
-            downloadCtx.stroke();
-          }
-          if (cell.walls[2]) {
-            downloadCtx.beginPath();
-            downloadCtx.moveTo(x + cellSize, y + cellSize);
-            downloadCtx.lineTo(x, y + cellSize);
-            downloadCtx.stroke();
-          }
-          if (cell.walls[3]) {
-            downloadCtx.beginPath();
-            downloadCtx.moveTo(x, y + cellSize);
-            downloadCtx.lineTo(x, y);
-            downloadCtx.stroke();
-          }
-        });
-
-        // Lejupielādējam attēlu
-        const link = document.createElement('a');
-        link.download = 'labirints.png';
-        link.href = downloadCanvas.toDataURL('image/png');
-        link.click();
-      }
-
-      // Pievienojam pogas event listener
-      document.getElementById('downloadBtn').addEventListener('click', downloadMaze);
+      // Atjaunojam draw funkciju
+      const originalDraw = draw;
+      draw = function() {
+        originalDraw();
+        drawAreas();
+      };
 
       // Atjaunojam generateNewMaze funkciju
-      function generateNewMaze() {
-        // Apstādinām esošo ģenerēšanu
-        stopGeneration();
-
-        // Iegūstam jaunos parametrus
-        const newCols = parseInt(document.getElementById('cols').value);
-        const newRows = parseInt(document.getElementById('rows').value);
-
-        // Iegūstam jaunos largeAreas parametrus
-        const startArea = {
-          x: parseInt(document.getElementById('startX').value),
-          y: parseInt(document.getElementById('startY').value),
-          w: parseInt(document.getElementById('startW').value),
-          h: parseInt(document.getElementById('startH').value),
-          type: 'start',
-          entry: { x: 2, y: 1 },
-          exit: { x: 2, y: 2 }
-        };
-
-        const checkpointArea = {
-          x: parseInt(document.getElementById('checkpointX').value),
-          y: parseInt(document.getElementById('checkpointY').value),
-          w: parseInt(document.getElementById('checkpointW').value),
-          h: parseInt(document.getElementById('checkpointH').value),
-          type: 'checkpoint',
-          entry: { x: 0, y: 1 },
-          exit: { x: 2, y: 1 }
-        };
-
-        const finishArea = {
-          x: parseInt(document.getElementById('finishX').value),
-          y: parseInt(document.getElementById('finishY').value),
-          w: parseInt(document.getElementById('finishW').value),
-          h: parseInt(document.getElementById('finishH').value),
-          type: 'finish',
-          entry: { x: 0, y: 1 },
-          exit: { x: 0, y: 2 }
-        };
-
-        // Iegūstam randomizācijas parametrus
-        const minBranches = parseInt(document.getElementById('minBranches').value);
-        const maxBranches = parseInt(document.getElementById('maxBranches').value);
-        const minDistance = parseInt(document.getElementById('minDistance').value);
-        const edgeChangeProb = parseInt(document.getElementById('edgeChangeProb').value) / 100;
-        const changeProb = parseInt(document.getElementById('changeProb').value) / 100;
-
-        // Atjaunojam globālos mainīgos
-        cols = newCols;
-        rows = newRows;
-        cellSize = canvas.width / cols;
-        grid = [];
-        largeAreas = [startArea, checkpointArea, finishArea];
-
-        // Izveidojam jaunu režģi
-        for (let y = 0; y < rows; y++) {
-          for (let x = 0; x < cols; x++) {
-            grid.push(new Cell(x, y));
-          }
+      const originalGenerateNewMaze = generateNewMaze;
+      generateNewMaze = function() {
+        // Pārbaudām vai ir vismaz viens sākuma un beigu laukums
+        const hasStart = largeAreas.some(area => area.type === 'start');
+        const hasFinish = largeAreas.some(area => area.type === 'finish');
+        
+        if (!hasStart || !hasFinish) {
+          alert('Lūdzu pievienojiet vismaz vienu sākuma un beigu laukumu!');
+          return;
         }
-
-        // Atjaunojam randomizācijas parametrus
-        const originalGenerateBranches = generateBranches;
-        generateBranches = function () {
-          const branchingPoints = getBranchingPoints();
-          if (branchingPoints.length === 0) return;
-
-          const numBranches = Math.floor(Math.random() * (maxBranches - minBranches + 1)) + minBranches;
-          const selectedPoints = [];
-
-          for (let i = 0; i < Math.min(numBranches, branchingPoints.length); i++) {
-            let attempts = 0;
-            let found = false;
-
-            while (!found && attempts < 10) {
-              const randomIndex = Math.floor(Math.random() * branchingPoints.length);
-              const point = branchingPoints[randomIndex];
-
-              const isTooClose = selectedPoints.some(selectedPoint => {
-                const dx = Math.abs(point.x - selectedPoint.x);
-                const dy = Math.abs(point.y - selectedPoint.y);
-                return dx + dy < minDistance;
-              });
-
-              if (!isTooClose) {
-                selectedPoints.push(point);
-                branchingPoints.splice(randomIndex, 1);
-                found = true;
-              }
-
-              attempts++;
-            }
-          }
-
-          selectedPoints.forEach(point => {
-            const branchCell = generateBranchFromPoint(point);
-            if (branchCell) {
-              activeGrowthCount++;
-              generateMazeStep(branchCell);
-            }
-          });
-        };
-
-        // Atjaunojam varbūtības mainīt virzienu
-        const originalGenerateMazeStep = generateMazeStep;
-        generateMazeStep = function (current) {
-          if (!isGenerating) return;
-
-          current.visited = true;
-          current.color = '#2196F3';
-          const neighbors = getUnvisitedNeighbors(current);
-
-          if (neighbors.length > 0) {
-            const lastDirection = stack.length > 0 ?
-              { dx: current.x - stack[stack.length - 1].x, dy: current.y - stack[stack.length - 1].y } :
-              null;
-
-            let next;
-            if (lastDirection && stack.length > 2) {
-              const isNearEdge = current.x <= 1 || current.x >= cols - 2 || current.y <= 1 || current.y >= rows - 2;
-              const changeDirectionProbability = isNearEdge ? edgeChangeProb : changeProb;
-
-              if (Math.random() < changeDirectionProbability) {
-                const perpendicularNeighbors = neighbors.filter(({ cell }) => {
-                  const dx = cell.x - current.x;
-                  const dy = cell.y - current.y;
-
-                  if (isNearEdge) {
-                    if (current.x <= 1 && dx <= 0) return false;
-                    if (current.x >= cols - 2 && dx >= 0) return false;
-                    if (current.y <= 1 && dy <= 0) return false;
-                    if (current.y >= rows - 2 && dy >= 0) return false;
-                  }
-
-                  return (dx !== lastDirection.dx && dy !== lastDirection.dy);
-                });
-
-                if (perpendicularNeighbors.length > 0) {
-                  next = perpendicularNeighbors[Math.floor(Math.random() * perpendicularNeighbors.length)];
-                } else {
-                  const awayFromEdgeNeighbors = neighbors.filter(({ cell }) => {
-                    if (current.x <= 1) return cell.x > current.x;
-                    if (current.x >= cols - 2) return cell.x < current.x;
-                    if (current.y <= 1) return cell.y > current.y;
-                    if (current.y >= rows - 2) return cell.y < current.y;
-                    return true;
-                  });
-
-                  next = awayFromEdgeNeighbors.length > 0 ?
-                    awayFromEdgeNeighbors[Math.floor(Math.random() * awayFromEdgeNeighbors.length)] :
-                    neighbors[Math.floor(Math.random() * neighbors.length)];
-                }
-              } else {
-                next = neighbors[Math.floor(Math.random() * neighbors.length)];
-              }
-            } else {
-              next = neighbors[Math.floor(Math.random() * neighbors.length)];
-            }
-
-            removeWallBetween(current, next.cell);
-            stack.push(current);
-            draw();
-            generationTimeout = setTimeout(() => generateMazeStep(next.cell), 5);
-          } else if (stack.length > 0) {
-            const back = stack.pop();
-            draw();
-            generationTimeout = setTimeout(() => generateMazeStep(back), 5);
-          } else {
-            activeGrowthCount--;
-            if (activeGrowthCount === 0) {
-              generationTimeout = setTimeout(finalizeMaze, 500);
-            }
-          }
-        };
-
-        // Sākam jaunu labirinta ģenerēšanu
-        isGenerating = true;
-        markBlockedAreas();
-        createMainPath();
-        draw();
-        generationTimeout = setTimeout(startBranching, 1000);
-      }
-
-      // Pievienojam pogas event listener
-      document.getElementById('generateBtn').addEventListener('click', generateNewMaze);
+        
+        originalGenerateNewMaze();
+      };
     };
   </script>
 </body>
