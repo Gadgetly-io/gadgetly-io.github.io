@@ -22,8 +22,8 @@ export const CONFIG = {
 
   // Kontroles punkta zona
   defaultCheckpointArea: {
-    x: 11,
-    y: 11,
+    x: 10,
+    y: 10,
     w: 6,
     h: 6,
     entry: { x: 0, y: 1 },
@@ -51,7 +51,7 @@ export const CONFIG = {
 
   // Krāsas
   colors: {
-    background: '#e0e5ec',
+    background: '#ffffff',
     primary: '#6c5ce7',
     secondary: '#00b894',
     accent: '#fdcb6e',
