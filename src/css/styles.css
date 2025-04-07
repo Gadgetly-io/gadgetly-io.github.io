@@ -1,0 +1,337 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@import 'tailwindcss';
+
+:root {
+    --background: #e0e5ec;
+    --text: #2d3436;
+    --primary: #6c5ce7;
+    --secondary: #00b894;
+    --accent: #fdcb6e;
+    --shadow-light: 6px 6px 12px #b8bec5;
+    --shadow-dark: -6px -6px 12px #ffffff;
+    --shadow-inset-light: inset 6px 6px 12px #b8bec5;
+    --shadow-inset-dark: inset -6px -6px 12px #ffffff;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: var(--background);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.5;
+    padding-top: 0;
+}
+
+.neumorphic {
+    background: var(--background);
+    box-shadow: var(--shadow-light), var(--shadow-dark);
+    border-radius: 12px;
+    transition: all 0.2s ease;
+}
+
+nav {
+    background: var(--background);
+    box-shadow: var(--shadow-light), var(--shadow-dark);
+    border-radius: 0;
+    margin-bottom: 20px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+}
+
+nav .container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+.neumorphic-btn {
+    background: var(--background);
+    box-shadow: var(--shadow-light), var(--shadow-dark);
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border: 2px solid transparent;
+    cursor: pointer;
+    font-size: 0.9rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.neumorphic-btn:hover {
+    border-color: var(--primary);
+}
+
+.neumorphic-btn:active {
+    transform: scale(0.95);
+    box-shadow: var(--shadow-inset-light), var(--shadow-inset-dark);
+}
+
+.neumorphic-btn-primary {
+    background: var(--primary);
+    color: white;
+}
+
+.neumorphic-btn-primary:hover {
+    border-color: white;
+}
+
+.neumorphic-btn-success {
+    background: var(--secondary);
+    color: white;
+}
+
+.neumorphic-btn-success:hover {
+    border-color: white;
+}
+
+.neumorphic-input {
+    background: var(--background);
+    box-shadow: var(--shadow-inset-light), var(--shadow-inset-dark);
+    border-radius: 8px;
+    padding: 8px 12px;
+    border: none;
+    width: 100%;
+    transition: all 0.2s ease;
+    font-size: 0.9rem;
+}
+
+.neumorphic-input:focus {
+    outline: none;
+    box-shadow: var(--shadow-inset-light), var(--shadow-inset-dark);
+}
+
+.neumorphic-tab {
+    background: var(--background);
+    box-shadow: var(--shadow-light), var(--shadow-dark);
+    border-radius: 8px;
+    padding: 6px 12px;
+    transition: all 0.2s ease;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.neumorphic-tab:active {
+    transform: scale(0.95);
+    box-shadow: var(--shadow-inset-light), var(--shadow-inset-dark);
+}
+
+.neumorphic-tab.active {
+    background: var(--primary);
+    color: white;
+    box-shadow: var(--shadow-inset-light), var(--shadow-inset-dark);
+    animation: tabActivate 0.3s ease;
+}
+
+@keyframes tabActivate {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(0.95);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes btnPress {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(0.95);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes valueChange {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.animate-tab {
+    animation: tabActivate 0.3s ease;
+}
+
+.animate-btn {
+    animation: btnPress 0.3s ease;
+}
+
+.animate-value {
+    animation: valueChange 0.3s ease;
+    color: var(--primary);
+}
+
+.neumorphic-card {
+    background: var(--background);
+    box-shadow: var(--shadow-light), var(--shadow-dark);
+    border-radius: 12px;
+    padding: 16px;
+    transition: all 0.2s ease;
+}
+
+.neumorphic-card:active {
+    transform: scale(0.98);
+    box-shadow: var(--shadow-inset-light), var(--shadow-inset-dark);
+}
+
+.neumorphic-range {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--background);
+    box-shadow: var(--shadow-inset-light), var(--shadow-inset-dark);
+    outline: none;
+}
+
+.neumorphic-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--primary);
+    cursor: pointer;
+    box-shadow: var(--shadow-light), var(--shadow-dark);
+    transition: all 0.2s ease;
+}
+
+.neumorphic-range::-webkit-slider-thumb:active {
+    transform: scale(1.2);
+    box-shadow: var(--shadow-inset-light), var(--shadow-inset-dark);
+}
+
+canvas {
+    box-shadow: var(--shadow-light), var(--shadow-dark);
+}
+
+.section-title {
+    position: relative;
+    display: inline-block;
+    padding-bottom: 6px;
+    font-size: 1.5rem;
+}
+
+.section-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 30px;
+    height: 3px;
+    background: var(--primary);
+    border-radius: 2px;
+}
+
+@media (max-width: 640px) {
+    nav {
+        height: 50px;
+    }
+
+    nav .container {
+        padding: 0 16px;
+    }
+
+    nav .logo-icon {
+        width: 32px;
+        height: 32px;
+    }
+
+    nav .logo-text {
+        font-size: 1.1rem;
+    }
+
+    nav .nav-links {
+        gap: 16px;
+    }
+
+    nav .nav-link {
+        font-size: 0.85rem;
+    }
+
+    body {
+        padding-top: 0;
+    }
+
+    .neumorphic {
+        border-radius: 10px;
+    }
+
+    .neumorphic-btn {
+        padding: 6px 12px;
+        font-size: 0.85rem;
+    }
+
+    .neumorphic-input {
+        padding: 6px 10px;
+        font-size: 0.85rem;
+    }
+
+    .neumorphic-tab {
+        padding: 4px 8px;
+        font-size: 0.85rem;
+    }
+
+    .neumorphic-card {
+        padding: 12px;
+    }
+
+    .section-title {
+        font-size: 1.25rem;
+    }
+}
+
+nav .logo-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+nav .logo-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--primary);
+    border-radius: 10px;
+    box-shadow: var(--shadow-light), var(--shadow-dark);
+}
+
+nav .logo-text {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text);
+}
+
+nav .nav-links {
+    display: flex;
+    gap: 24px;
+}
+
+nav .nav-link {
+    color: var(--text);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.2s ease;
+}
+
+nav .nav-link:hover {
+    color: var(--primary);
+}
