@@ -62,11 +62,13 @@ export class MazeGenerator {
       const startPoint = { x: 0, y: 0 };
       const endPoint = { x: this.cols - 1, y: this.rows - 1 };
 
-      // Izveido starppunktu
-      const midPoint = this.generateRandomMidPoint(startPoint, endPoint);
+      // Izveido vairākus starppunktus
+      const midPoint1 = this.generateRandomMidPoint(startPoint, endPoint);
+      const midPoint2 = this.generateRandomMidPoint(midPoint1, endPoint);
+      const midPoint3 = this.generateRandomMidPoint(midPoint2, endPoint);
 
       // Ģenerē ceļu
-      this.generatePathWithMidPoint(startPoint, midPoint, endPoint);
+      this.generatePathWithMidPoint(startPoint, endPoint, midPoint1, midPoint2, midPoint3);
       return;
     }
 
@@ -77,21 +79,22 @@ export class MazeGenerator {
 
       // Izveido ceļu no pašreizējā laukuma izejas uz nākamā laukuma ieeju
       const startPoint = {
-        x: currentArea.x + currentArea.exit.x,
-        y: currentArea.y + currentArea.exit.y
+        x: currentArea.x + currentArea.w - 1,
+        y: currentArea.y + currentArea.h - 1
       };
 
       const endPoint = {
-        x: nextArea.x + nextArea.entry.x,
-        y: nextArea.y + nextArea.entry.y
+        x: nextArea.x,
+        y: nextArea.y
       };
 
-      // Izveido starppunktu
-      const midPoint = this.generateRandomMidPoint(startPoint, endPoint);
-      const midPoint2 = this.generateRandomMidPoint(startPoint, midPoint);
+      // Izveido vairākus starppunktus
+      const midPoint1 = this.generateRandomMidPoint(startPoint, endPoint);
+      const midPoint2 = this.generateRandomMidPoint(midPoint1, endPoint);
+      const midPoint3 = this.generateRandomMidPoint(midPoint2, endPoint);
 
       // Ģenerē ceļu
-      this.generatePathWithMidPoint(startPoint, endPoint, midPoint, midPoint2);
+      this.generatePathWithMidPoint(startPoint, endPoint, midPoint1, midPoint2, midPoint3);
     }
   }
 
@@ -100,8 +103,8 @@ export class MazeGenerator {
     const dx = end.x - start.x;
     const dy = end.y - start.y;
     
-    // Izvēlas random attālumu no sākuma punkta (70-90% no kopējā ceļa)
-    const progress = 0.7 + Math.random() * 0.2;
+    // Izvēlas random attālumu no sākuma punkta (30-70% no kopējā ceļa)
+    const progress = 0.3 + Math.random() * 0.4;
     
     // Aprēķina starppunkta koordinātas
     let midX = Math.floor(start.x + dx * progress);
@@ -111,18 +114,38 @@ export class MazeGenerator {
     midX = Math.max(1, Math.min(midX, this.cols - 2));
     midY = Math.max(1, Math.min(midY, this.rows - 2));
     
-    // Pārbauda, vai punkts nav pārāk tuvu mērķim
+    // Pievieno nejaušu novirzi
+    const randomOffset = Math.floor(Math.random() * 3) - 1; // -1, 0 vai 1
+    midX += randomOffset;
+    midY += randomOffset;
+    
+    // Pārbauda, vai punkts nav pārāk tuvu mērķim vai sākumam
     const distanceToEnd = Math.abs(midX - end.x) + Math.abs(midY - end.y);
-    if (distanceToEnd < 3) {
-      // Ja punkts ir pārāk tuvu mērķim, pārvieto to tālāk
-      midX = Math.floor(start.x + dx * (progress - 0.1));
-      midY = Math.floor(start.y + dy * (progress - 0.1));
+    const distanceToStart = Math.abs(midX - start.x) + Math.abs(midY - start.y);
+    
+    if (distanceToEnd < 3 || distanceToStart < 3) {
+      // Ja punkts ir pārāk tuvu, pārvieto to tālāk
+      midX = Math.floor(start.x + dx * (progress + 0.1));
+      midY = Math.floor(start.y + dy * (progress + 0.1));
+    }
+    
+    // Pārbauda, vai punkts nav lielā laukumā
+    const isInLargeArea = this.largeAreas.some(area => 
+      midX >= area.x && midX < area.x + area.w &&
+      midY >= area.y && midY < area.y + area.h
+    );
+    
+    if (isInLargeArea) {
+      // Ja punkts ir lielā laukumā, pārvieto to uz āru
+      midX = Math.max(1, Math.min(midX, this.cols - 2));
+      midY = Math.max(1, Math.min(midY, this.rows - 2));
     }
     
     return { x: midX, y: midY };
   }
 
   generatePathWithMidPoint(start, end, ...mid) {
+    
     // pa vidu var būt vairāki starppunkti, kur iegūtās ceļa daļas tiks apvienotas un no viena starppunkta aiziet un otra starppunkta ieeja
     // Pārbauda, vai ir vairāki starppunkti
     if (mid.length > 1) {
@@ -132,11 +155,14 @@ export class MazeGenerator {
         this.generatePathSegment(mid[i], mid[i + 1]);
       }
       this.generatePathSegment(mid[mid.length - 1], end);
-    } else {
+    } else if (mid.length === 1) {
       // Ģenerē ceļu no start uz mid
       this.generatePathSegment(start, mid[0]);
       // Ģenerē ceļu no mid uz end
       this.generatePathSegment(mid[0], end);
+    } else {
+      // Ja nav starppunktu, ģenerē tiešu ceļu
+      this.generatePathSegment(start, end);
     }
   }
 
@@ -146,45 +172,97 @@ export class MazeGenerator {
     const visited = new Set();
     visited.add(`${currentX},${currentY}`);
 
+    // Atzīmē sākuma šūnu
+    const startCell = this.getCell(start.x, start.y);
+    if (startCell) {
+      startCell.visited = true;
+      startCell.color = CONFIG.colors.secondary;
+    }
+
     while (currentX !== end.x || currentY !== end.y) {
       const cell = this.getCell(currentX, currentY);
-      if (!cell) break;
+      if (!cell) {
+        break;
+      }
 
-      cell.visited = true;
-      cell.color = CONFIG.colors.secondary;
+      // Pārbauda, vai nākamais gājiens ir tieši uz beigu punktu
+      const dx = end.x - currentX;
+      const dy = end.y - currentY;
+      const isNextToEnd = (Math.abs(dx) === 1 && dy === 0) || (Math.abs(dy) === 1 && dx === 0);
+
+      if (isNextToEnd) {
+        const nextCell = this.getCell(end.x, end.y);
+        if (nextCell) {
+          cell.removeWallBetween(nextCell);
+          currentX = end.x;
+          currentY = end.y;
+          visited.add(`${currentX},${currentY}`);
+          nextCell.visited = true;
+          nextCell.color = CONFIG.colors.secondary;
+          continue;
+        }
+      }
 
       const possibleMoves = [];
 
       // Pārbauda iespējamos gājienus
       if (currentX < end.x && !visited.has(`${currentX + 1},${currentY}`)) {
-        possibleMoves.push({ dx: 1, dy: 0 });
+        const nextCell = this.getCell(currentX + 1, currentY);
+        if (nextCell && !nextCell.blocked) {
+          possibleMoves.push({ dx: 1, dy: 0 });
+        }
       }
       if (currentX > end.x && !visited.has(`${currentX - 1},${currentY}`)) {
-        possibleMoves.push({ dx: -1, dy: 0 });
+        const nextCell = this.getCell(currentX - 1, currentY);
+        if (nextCell && !nextCell.blocked) {
+          possibleMoves.push({ dx: -1, dy: 0 });
+        }
       }
       if (currentY < end.y && !visited.has(`${currentX},${currentY + 1}`)) {
-        possibleMoves.push({ dx: 0, dy: 1 });
+        const nextCell = this.getCell(currentX, currentY + 1);
+        if (nextCell && !nextCell.blocked) {
+          possibleMoves.push({ dx: 0, dy: 1 });
+        }
       }
       if (currentY > end.y && !visited.has(`${currentX},${currentY - 1}`)) {
-        possibleMoves.push({ dx: 0, dy: -1 });
+        const nextCell = this.getCell(currentX, currentY - 1);
+        if (nextCell && !nextCell.blocked) {
+          possibleMoves.push({ dx: 0, dy: -1 });
+        }
       }
+
 
       // Ja nav iespējamo gājienu, mēģina atrast alternatīvu ceļu
       if (possibleMoves.length === 0) {
         const neighbors = this.getUnvisitedNeighbors(cell);
         if (neighbors.length > 0) {
-          const next = neighbors[Math.floor(Math.random() * neighbors.length)];
+          // Izvēlas kaimiņu, kas ir vistuvāk mērķim
+          const next = neighbors.reduce((best, current) => {
+            const bestDist = Math.abs(end.x - best.cell.x) + Math.abs(end.y - best.cell.y);
+            const currentDist = Math.abs(end.x - current.cell.x) + Math.abs(end.y - current.cell.y);
+            return currentDist < bestDist ? current : best;
+          });
+
           cell.removeWallBetween(next.cell);
           currentX = next.cell.x;
           currentY = next.cell.y;
           visited.add(`${currentX},${currentY}`);
+          next.cell.visited = true;
+          next.cell.color = CONFIG.colors.secondary;
           continue;
         }
+        console.log('No alternative path found');
         break;
       }
 
-      // Izvēlas random gājienu no iespējamiem
-      const move = possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
+      // Izvēlas gājienu, kas vistuvāk mērķim
+      const move = possibleMoves.reduce((best, current) => {
+        const bestDist = Math.abs(end.x - (currentX + best.dx)) + Math.abs(end.y - (currentY + best.dy));
+        const currentDist = Math.abs(end.x - (currentX + current.dx)) + Math.abs(end.y - (currentY + current.dy));
+        return currentDist < bestDist ? current : best;
+      });
+
+
       const nextCell = this.getCell(currentX + move.dx, currentY + move.dy);
 
       if (nextCell) {
@@ -192,7 +270,19 @@ export class MazeGenerator {
         currentX += move.dx;
         currentY += move.dy;
         visited.add(`${currentX},${currentY}`);
+        nextCell.visited = true;
+        nextCell.color = CONFIG.colors.secondary;
+      } else {
+        console.log('Cannot move to next cell');
+        break;
       }
+    }
+
+    // Atzīmē pēdējo šūnu kā galvenā ceļa daļu
+    const endCell = this.getCell(end.x, end.y);
+    if (endCell) {
+      endCell.visited = true;
+      endCell.color = CONFIG.colors.secondary;
     }
   }
 
@@ -469,8 +559,6 @@ export class MazeGenerator {
         w: parseInt(document.getElementById('startW').value),
         h: parseInt(document.getElementById('startH').value),
         type: 'start',
-        entry: { x: 2, y: 1 },
-        exit: { x: 2, y: 2 }
       },
       {
         x: parseInt(document.getElementById('checkpointX').value),
@@ -478,8 +566,6 @@ export class MazeGenerator {
         w: parseInt(document.getElementById('checkpointW').value),
         h: parseInt(document.getElementById('checkpointH').value),
         type: 'checkpoint',
-        entry: { x: 0, y: 1 },
-        exit: { x: 2, y: 1 }
       },
       {
         x: parseInt(document.getElementById('finishX').value),
@@ -487,8 +573,6 @@ export class MazeGenerator {
         w: parseInt(document.getElementById('finishW').value),
         h: parseInt(document.getElementById('finishH').value),
         type: 'finish',
-        entry: { x: 0, y: 1 },
-        exit: { x: 0, y: 2 }
       }
     ];
 

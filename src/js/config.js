@@ -16,8 +16,6 @@ export const CONFIG = {
     y: 0,
     w: 3,
     h: 3,
-    entry: { x: 2, y: 1 },
-    exit: { x: 2, y: 2 }
   },
 
   // Kontroles punkta zona
@@ -26,8 +24,6 @@ export const CONFIG = {
     y: 10,
     w: 6,
     h: 6,
-    entry: { x: 0, y: 1 },
-    exit: { x: 2, y: 1 }
   },
 
   // Beigu zona
@@ -36,8 +32,6 @@ export const CONFIG = {
     y: 22,
     w: 3,
     h: 3,
-    entry: { x: 0, y: 1 },
-    exit: { x: 0, y: 2 }
   },
 
   // Randomizācijas parametri
